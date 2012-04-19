@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="C:/Users/marius/Dropbox/03 Code/ModelBuilder/lib/core.jar" sourcepath="C:/Users/marius/Dropbox/03 Code/20 Code/00 Code/unlekker006/unlekker006-src/processing/core"/>
+	<classpathentry kind="lib" path="C:/Users/marius/Dropbox/03 Code/ModelBuilder/lib/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="C:/Users/marius/Dropbox/03 Code/ModelBuilder/lib/jogl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/marius/Dropbox/03 Code/20 Code/00 Code/unlekker006/unlekker006-lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/marius/Dropbox/03 Code/ModelBuilder/lib/opengl.jar"/>
+	<classpathentry kind="lib" path="lib/controlP5.jar"/>
+	<classpathentry kind="lib" path="lib/itext.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
