@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="public" author="true" classpath="lib/core.jar;lib/jogl.jar;lib/opengl.jar;lib/gluegen-rt.jar" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="unlekker.util,unlekker.modelbuilder" source="1.3" sourcepath="src" splitindex="true" use="true" version="true"/>
+    </target>
+</project>
