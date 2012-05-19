@@ -34,3 +34,4 @@ Thumbs.db
 *.jardesc
 
 misc/*
+bin/*

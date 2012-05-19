@@ -10,7 +10,7 @@ public void initGUI() {
   gui.addButton("clear");
   gui.addButton("saveSTL");
   gui.addButton("saveImage");
-  
+  gui.setLayout(true);
   gui.cpw=180;
 }
 
