@@ -87,6 +87,20 @@ public class UNav3D {
 		p.unregisterMouseEvent(this);
 	}
 
+	public void transformPoint(UVec3 v) { 
+  	if(rot.y!=0) v.rotateY(rot.y);
+  	if(rot.x!=0) v.rotateX(rot.x);
+  	if(rot.z!=0) v.rotateZ(rot.z);
+  	v.add(trans.x,trans.y,trans.z);
+  }
+
+	public void untransformPoint(UVec3 v) { 
+  	v.sub(trans.x,trans.y,trans.z);
+  	if(rot.z!=0) v.rotateZ(-rot.z);
+  	if(rot.x!=0) v.rotateX(-rot.x);
+  	if(rot.y!=0) v.rotateY(-rot.y);
+  }
+
 	public void doTransforms() { 
   	p.translate(trans.x,trans.y,trans.z);
   	if(rot.y!=0) p.rotateY(rot.y);

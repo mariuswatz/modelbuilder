@@ -3,6 +3,21 @@ package unlekker.modelbuilder.filter;
 import unlekker.modelbuilder.*;
 import unlekker.util.UUtil;
 
+/**
+ * Various geometry vertex deformations, such as bend, twist, taper and stack. All transformations are applied according to 
+ * relative Y values so that vertices with the lowest Y value are considered to be at <code>t=0</code>, with 
+ * <code>t=1</code> occurring at the maximum Y value. Consequently vertices with low Y values will be transformed the
+ * least, with the highest points being transformed the most.
+ * 
+ * Tyipcal use:
+ * 
+ * <code>UGeometry geo=UPrimitive.
+ * new UTransformDeform().bend(radians(60)).transform(geo);
+ * </code>
+ * 
+ * @author Marius Watz
+ *
+ */
 public class UTransformDeform extends UFilter {
 	private UBBox bb;
 	
