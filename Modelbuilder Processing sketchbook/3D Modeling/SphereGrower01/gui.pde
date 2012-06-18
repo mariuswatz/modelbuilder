@@ -3,13 +3,14 @@ public void initGUI() {
   gui.cpw=200;
   gui.addSlider("minGrowthMod", minGrowthMod, 0.1f, 0.6f);
   gui.addSlider("maxGrowthMod", maxGrowthMod, 0.6f, 0.95f);
+  gui.newRow();
   gui.addButton("place");
-  gui.addPos(0, 10);
   gui.addButton("useBox");
   gui.addButton("useSphere");
-  gui.addPos(0, 10);
+  gui.newRow();
   gui.addButton("reinit");
   gui.addButton("saveSTL");
+  gui.setLayout(false);
 }
 
 public void useSphere() {

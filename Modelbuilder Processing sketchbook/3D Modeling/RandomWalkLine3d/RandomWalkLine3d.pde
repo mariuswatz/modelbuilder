@@ -16,7 +16,7 @@ USimpleGUI gui;
 UVec3 dir, last;
 float maxRot=60, length=60;
 int buildSpeed=25;
-boolean doBuild;
+boolean doBuild=true;
 
 int cnt=0;
 

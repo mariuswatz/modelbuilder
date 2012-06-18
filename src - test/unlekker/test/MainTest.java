@@ -22,7 +22,10 @@ public class MainTest extends PApplet {
 				"unlekker.test.UPShapeToolTest",
 				"unlekker.test.SubDivTest",
 				"unlekker.test.ModelBuilderTest",
-				"unlekker.test.AppTest"
+				"unlekker.test.AppTest",
+				"unlekker.test.UGeometry2D",
+				"unlekker.test.GUITest",
+				"unlekker.test.FileStructure"
 				
 		};
 		

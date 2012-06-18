@@ -1,3 +1,11 @@
+/**
+ * UColorTool_demo_01.pde - Marius Watz, 2012
+ * http://workshop.evolutionzone.com
+ * 
+ * Demonstrates UColorTool and the use of multiple
+ * gradients to create a palette.
+ */
+ 
 import controlP5.*;
 
 import processing.opengl.*;
@@ -15,7 +23,8 @@ public void setup() {
   initGUI();
 
   vl=new UVertexList();
-  for (int i=0; i<100; i++) vl.add(new UVec3(random(width), random(100, height)));
+  for (int i=0; i<100; i++) 
+    vl.add(new UVec3(random(width), random(100, height)));
 }
 
 public void draw() {

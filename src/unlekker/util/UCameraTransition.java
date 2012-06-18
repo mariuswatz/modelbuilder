@@ -217,16 +217,23 @@ public class UCameraTransition {
 
 	public void addGUI(USimpleGUI gui) {
 		String labels[]=new String[viewNum];
-		for(int i=0; i<labels.length; i++) labels[i]="Set cam "+i;
+		for(int i=0; i<labels.length; i++) labels[i]="Set cam "+(i+1);
 		gui.addDropDown("camSetCam", labels, 120);
-		for(int i=0; i<labels.length; i++) labels[i]="Set view "+i;
+		for(int i=0; i<labels.length; i++) labels[i]="Set view "+(i+1);
 		gui.addDropDown("camSetView", labels, 120);
+		gui.cp.group("camSetCam").setOpen(true);
 		
 	}
 
 	public void controlEvent(ControlEvent ev) {
 	  if (ev.isGroup()) {
 	  	UUtil.log("UCam controlEvent - "+ev.group().value()+" "+ev.group());
+	  	String val=ev.group().stringValue();
+	  	if(val.equalsIgnoreCase("set cam 1")) setCam(0);
+	  	if(val.equalsIgnoreCase("set cam 2")) setCam(1);
+	  	if(val.equalsIgnoreCase("set view 1")) setView(0);
+	  	if(val.equalsIgnoreCase("set view 2")) setView(1);
+	  	ev.group().setOpen(true);
 	  }
 
 		

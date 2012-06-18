@@ -10,7 +10,7 @@ public void initGUI() {
   gui.addButton("setView2");
   gui.addButton("setView3");
   gui.newRow();
-  gui.addButton("toggleRun");
+  gui.addButton("run");
   gui.setLayout(false);
 }
 
@@ -41,7 +41,7 @@ public void setView3() {
 
 
 public void toggleRun() {
-      if (cam.isRunning)cam.stop(); 
-      else cam.run();
+  if (cam.isRunning)cam.stop(); 
+  else cam.run();
 }
 

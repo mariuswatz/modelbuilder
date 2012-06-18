@@ -1,5 +1,12 @@
-import unlekker.test.*;
-import unlekker.util.*;
+/**
+ * UColorTool_demo_01.pde - Marius Watz, 2012
+ * http://workshop.evolutionzone.com
+ * 
+ * Demonstrates UColorTool in the context of a
+ * randomized visual composition.
+ */
+ 
+ import unlekker.util.*;
 import unlekker.modelbuilder.*;
 import ec.util.*;
 

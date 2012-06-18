@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project ModelBuilder with libraries in sub-folder">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="C:/Users/marius/Dropbox/03 Code/ModelBuilder/exported/modelbuilder.jar">
+            <manifest>
+                <attribute name="Main-Class" value="unlekker.test.ModelBuilderTest"/>
+                <attribute name="Class-Path" value=". modelbuilder_lib/core.jar modelbuilder_lib/gluegen-rt.jar modelbuilder_lib/jogl.jar modelbuilder_lib/opengl.jar modelbuilder_lib/controlP5.jar modelbuilder_lib/itext.jar"/>
+            </manifest>
+            <fileset dir="C:/Users/marius/Dropbox/03 Code/ModelBuilder/bin"/>
+        </jar>
+        <delete dir="C:/Users/marius/Dropbox/03 Code/ModelBuilder/exported/modelbuilder_lib"/>
+        <mkdir dir="C:/Users/marius/Dropbox/03 Code/ModelBuilder/exported/modelbuilder_lib"/>
+        <copy file="C:/Users/marius/Dropbox/03 Code/ModelBuilder/lib/core.jar" todir="C:/Users/marius/Dropbox/03 Code/ModelBuilder/exported/modelbuilder_lib"/>
+        <copy file="C:/Users/marius/Dropbox/03 Code/ModelBuilder/lib/gluegen-rt.jar" todir="C:/Users/marius/Dropbox/03 Code/ModelBuilder/exported/modelbuilder_lib"/>
+        <copy file="C:/Users/marius/Dropbox/03 Code/ModelBuilder/lib/jogl.jar" todir="C:/Users/marius/Dropbox/03 Code/ModelBuilder/exported/modelbuilder_lib"/>
+        <copy file="C:/Users/marius/Dropbox/03 Code/ModelBuilder/lib/opengl.jar" todir="C:/Users/marius/Dropbox/03 Code/ModelBuilder/exported/modelbuilder_lib"/>
+        <copy file="C:/Users/marius/Dropbox/03 Code/ModelBuilder/lib/controlP5.jar" todir="C:/Users/marius/Dropbox/03 Code/ModelBuilder/exported/modelbuilder_lib"/>
+        <copy file="C:/Users/marius/Dropbox/03 Code/ModelBuilder/lib/itext.jar" todir="C:/Users/marius/Dropbox/03 Code/ModelBuilder/exported/modelbuilder_lib"/>
+    </target>
+</project>

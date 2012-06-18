@@ -13,15 +13,20 @@ public class GUITest extends PApplet {
 		
 		gui.addButton("switchLayout");
 		gui.addButton("test02");
-		gui.addButton("test03");
+		gui.addButton("goOnCallSantaClaus");
 		gui.newRow();
+		
 		gui.addRadioButton(
 				"rb", new String[] {"abc","b","c"}, 50);
+		gui.addDropDown("drop", new String[] {"abc","b","c"}, 50);
+		gui.addTextField("Debug", 100, 20);
 		gui.addToggle("toggle",true);
-		gui.addSlider("slider", 0, 0, 100);
-		gui.addSlider("slider2", 0, 0, 100);
-		gui.setLayout(true);
+		gui.newRow();
 		
+		gui.addSlider("slider", 0, 0, 100);
+		gui.addSlider("sliderlyHeaven", 0, 0, 100);
+		gui.setLayout(false);
+		gui.setText("Debug", gui.cpw+" "+gui.cph);
 	}
 	
 	public void switchLayout() {

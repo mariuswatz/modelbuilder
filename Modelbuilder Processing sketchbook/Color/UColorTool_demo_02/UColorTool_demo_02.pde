@@ -1,4 +1,14 @@
-import controlP5.*;
+/**
+ * UColorTool_demo_01.pde - Marius Watz, 2012
+ * http://workshop.evolutionzone.com
+ * 
+ * Demonstrates UColorTool and the use of multiple
+ * gradients to create a palette, including the use of
+ * a randomized chance to exclude gradients when 
+ * UColorTool.generateColors() is called.
+ */
+ 
+ import controlP5.*;
 
 import processing.opengl.*;
 import unlekker.modelbuilder.*;

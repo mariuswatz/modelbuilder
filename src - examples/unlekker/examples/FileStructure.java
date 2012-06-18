@@ -17,17 +17,24 @@ public class FileStructure extends PApplet {
 		gui=new USimpleGUI(this);
 		gui.addButton("scan");
 		
-		String path="C:\\Users\\marius\\Dropbox\\03 Code\\20 Code\\Processing Sketchbook\\/processing-android-core-0186.zip";
-		struct=new UFileStructure(UIO.getPath(path));
-		struct.recurse();
-		
 		UUtil.logToFile("file.log");
 		
+		String path="C:\\Users\\marius\\Dropbox\\03 Code\\20 Code\\Processing Sketchbook\\2012 Workshops";
+		path="C:\\Users\\marius\\Dropbox";
+		struct=new UFileStructure(path);
+		struct.recurse();
+		
 		int id=0;
-		for(UFileStructure s:struct.processQueue.processQueue) {
-			UUtil.logDivider(UUtil.nf(id++,3)+" "+s.path);
-			s.printStructure();
-		}
+		for(UFileNode dir: struct.dir) UUtil.log((id++)+" "+dir.fullName);
+		
+		
+		struct.saveCSV("file.csv");
+		
+//		int id=0;
+//		for(UFileStructure s:struct.processQueue.processQueue) {
+//			UUtil.logDivider(UUtil.nf(id++,3)+" "+s.path);
+//			s.printStructure();
+//		}
 	}
 	
 	public void scan() {
