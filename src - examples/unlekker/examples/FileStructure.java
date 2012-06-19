@@ -17,6 +17,8 @@ public class FileStructure extends PApplet {
 		gui=new USimpleGUI(this);
 		gui.addButton("scan");
 		
+		
+		
 		UUtil.logToFile("file.log");
 		
 		String path="C:\\Users\\marius\\Dropbox\\03 Code\\20 Code\\Processing Sketchbook\\2012 Workshops";

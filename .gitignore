@@ -17,6 +17,7 @@
 *.iso
 *.rar
 *.tar
+*.stl
 
 # Logs and databases #
 ######################
@@ -33,5 +34,6 @@ Thumbs.db
 
 *.jardesc
 
-misc/*
-bin/*
+./misc/*
+./bin/*
+./save/*
