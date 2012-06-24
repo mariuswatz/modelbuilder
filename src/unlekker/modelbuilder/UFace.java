@@ -180,7 +180,7 @@ public class UFace implements UConstants, Comparable<UFace> {
 	}
 
 	public UFace unflatten(float data[]) {
-		UUtil.log(UUtil.toString(data));
+//		UUtil.log(UUtil.toString(data));
 		
 		rotateZ(data[6]).rotateY(-data[5]).rotateZ(data[4]).
 			rotateY(data[3]).translate(data[0], data[1], data[2]);

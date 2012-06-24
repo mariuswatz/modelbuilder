@@ -19,7 +19,8 @@ public class Main extends PApplet {
 		String sketch[] =new String [] {
 				"unlekker.examples.TileSaving",
 				"unlekker.examples.PShapeDrawing",
-				"unlekker.examples.FileStructure"
+				"unlekker.examples.FileStructure",
+				"unlekker.examples.GUITest"
 				
 				
 				

@@ -10,14 +10,15 @@ public class USimpleGUI {
 	public PApplet p;
   public ControlP5 cp;
   public int bgCol, sliderW=100,charWidth=6;
-  public float cpx, cpy, cpw, cph,lastW,lastH;
-  public float padding=5;
+  public int cpx, cpy, cpw, cph,lastW,lastH;
+  public int padding=5;
   
   public boolean layoutVertical=true;
   public boolean enabled=true;
   private boolean layoutCalculated=false;
   
   ArrayList<GUINode> nodes;
+	private int ID;
 
   public USimpleGUI(PApplet _p) {
     p=_p;
@@ -33,10 +34,12 @@ public class USimpleGUI {
     bgCol=UColorTool.toColor("666666");
     
     nodes=new ArrayList<USimpleGUI.GUINode>();
+    ID=0;
   }
 
   public void draw() {
   	if(!enabled) return;
+  	p.rectMode(p.CORNER);
   	
   	if(!layoutCalculated) {
   		UUtil.log("USimpleGUI.setLayout() not called - setting vertical layout.");
@@ -51,13 +54,28 @@ public class USimpleGUI {
 //    UUtil.log("cpw "+cpw+" "+cph);
     cp.draw();
     p.hint(p.ENABLE_DEPTH_TEST);
-    
-//    p.noFill();
-//    p.stroke(255,0,0);
-//    p.rectMode(p.CORNER);
-//    for(GUINode node:nodes) if(!node.isNewRow){
-//    	p.rect(node.posx,node.posy, node.width,node.height);
-//    }
+  }
+  
+  public void drawGUIOutlines() {
+	  p.noStroke();
+	  p.rectMode(p.CORNER);
+	  for(GUINode node:nodes) if(!node.isNewRow){
+		  p.fill(255,0,0);
+	  	p.rect(node.posx,node.posy, node.width,1);
+	  	p.rect(node.posx,node.posy, 1,node.height);
+	  	p.rect(node.posx,node.posy+node.height-1, node.width,1);
+	  	p.rect(node.posx+node.width-1,node.posy, 1,node.height);
+	  	
+	  	p.textSize(9);
+	  	String s=node.width+" "+node.height;
+	  	float pw=p.textWidth(s)+4;
+	  	float px=p.max(node.posx,node.posx+node.width-pw);
+	  	p.rect(px,node.posy, pw,12);
+	  	p.fill(0);
+	  	p.text(s,
+	  			px+2,node.posy+10);
+	  }
+
   }
 
   public void enable() {
@@ -79,7 +97,7 @@ public class USimpleGUI {
   }
 
 	public USimpleGUI addToggle(String name,boolean value) {
-    Toggle tmp=cp.addToggle(name,value,(int)cpx, (int)cpy, 15, 15);
+    Toggle tmp=cp.addToggle(name,value,cpx, cpy, 15, 15);
 		int tw=tmp.captionLabel().width()-5;
     addNode(tmp, name,tw,tmp.getHeight()+tmp.captionLabel().getLineHeight());
     tmp.setValue(value);
@@ -87,10 +105,10 @@ public class USimpleGUI {
 		return this;
   }
 	
-	public USimpleGUI addTextField(String name,float w,float h) {
+	public USimpleGUI addTextField(String name,int w,int h) {
 		Textfield txt;
 
-		txt=cp.addTextfield(name,(int)cpx, (int)cpy,(int)w,(int)h);
+		txt=cp.addTextfield(name,cpx, cpy,w,h);
 		addNode(txt,name,txt.getWidth(),txt.getHeight()+txt.captionLabel().getLineHeight());
 		return this;
 	}
@@ -109,12 +127,24 @@ public class USimpleGUI {
 		((Textfield)c).setValue(text);
 	}
 
+	public USimpleGUI addLabel(String name,String value,int w,int h) {
+		Textlabel label=cp.addTextlabel(name, value, w, h);
+		addNode(label,name,w,h);
+		return this;
+	}
+	
+	public USimpleGUI setLabel(String name,String value) {
+		Textlabel label=(Textlabel)cp.controller(name);
+		label.setValue(value);
+		return this;
+	}
+	
 	// allows you to the set the caption label on a GUI element
 	public void setCaption(String name,String caption) {
 		Controller c=cp.controller(name);
 		c.setCaptionLabel(caption);
 	}
-
+	
   public USimpleGUI addSlider(
     String name, float val, float min, float max) {
 
@@ -143,7 +173,7 @@ public class USimpleGUI {
    * @return Reference to this <code>USimpleGUI</code> instance
    */
   public USimpleGUI addRadioButton(String name,String labels[],float w) {
-  	RadioButton r=cp.addRadioButton(name,(int)cpx,(int)cpy);
+  	RadioButton r=cp.addRadioButton(name,cpx,cpy);
   	
     r.setItemsPerRow(1);
     int txtlen=0;
@@ -189,7 +219,7 @@ public class USimpleGUI {
    */
   public void setLayout(boolean vertical) {
 		GUINode last=null,row[]=new GUINode[100];
-		float rowh=0;
+		int rowh=0;
 		
 		layoutCalculated=true;
   	layoutVertical=vertical;
@@ -207,13 +237,14 @@ public class USimpleGUI {
   		for(GUINode n : nodes) {
   			pos.add(0,cpy);
   			cpw=PApplet.max(cpw,n.width);
-  			cpy+=n.height;
+  			cpy+=n.height-padding;
+  			if(n.equals(nodes.get(nodes.size()-1))) cpy+=padding;
   			id++;
   		}
 
   		id=0;
   		cph=cpy;
-  		for(GUINode n : nodes) n.setPos(pos.v[id].x,pos.v[id++].y);
+  		for(GUINode n : nodes) n.setPos((int)pos.v[id].x,(int)pos.v[id++].y);
   	}
 		else {
   		for(GUINode n : nodes) {
@@ -232,9 +263,9 @@ public class USimpleGUI {
   			}
   			
   			
-//  			UUtil.log((int)cpx+","+(int)cpy+" "+
-//  					(int)n.width+","+(int)n.height+
-//  					" rh="+(int)rowh+" "+n.name+" "+n.className);
+//  			UUtil.log(cpx+","+cpy+" "+
+//  					n.width+","+n.height+
+//  					" rh="+rowh+" "+n.name+" "+n.className);
   			last=n;
   			id++;
   		}
@@ -254,12 +285,14 @@ public class USimpleGUI {
   private void addNode(Object o,String name, int width, int height) {
 		nodes.add(new GUINode(o,name,width,height));
 		GUINode n=nodes.get(nodes.size()-1);
-		//UUtil.log(nodes.size()+" "+name+" "+(int)n.width+"x"+(int)n.height);		
+		if(n.isGroup) n.group.setId(ID++);
+		else if(n.control!=null) n.control.setId(ID++);
+		//UUtil.log(nodes.size()+" "+name+" "+n.width+"x"+n.height);		
 	}
   
   
 
-	private void setLast(float lw, float lh) {
+	private void setLast(int lw, int lh) {
 		lastW=lw;
 		lastH=lh;
     cpw=cpw>cpx+lw ? cpw : cpx+lw;
@@ -272,6 +305,120 @@ public class USimpleGUI {
   	return this;
   }
   
+  public static int TOGGLE=0,SLIDER=1,BUTTON=2,RADIOBUTTON=3,
+  		TEXTFIELD=4,DROPDOWN=5,LABEL=6;
+  		
+  		public static String TOGGLESTR="Toggle",SLIDERSTR="Slider",
+  		BUTTONSTR="Button",RADIOBUTTONSTR="RadioButton",TEXTFIELDSTR="Textfield",
+  		LABELSTR="Textlabel",DROPDOWNSTR="DropdownList";
+  		
+  public static int getType(ControllerInterface cc) {
+  	String name=cc.getClass().getSimpleName();
+  	
+  	if(name.equals(BUTTONSTR)) return BUTTON;
+  	if(name.equals(TOGGLESTR)) return TOGGLE;
+  	if(name.equals(SLIDERSTR)) return SLIDER;
+  	if(name.equals(RADIOBUTTONSTR)) return RADIOBUTTON;
+  	if(name.equals(TEXTFIELDSTR)) return TEXTFIELD;
+  	if(name.equals(LABELSTR)) return LABEL;
+  	if(name.equals(DROPDOWNSTR)) return DROPDOWN;
+  	
+  	return -1;
+  }
+  
+  public String [] toDataString() {
+//	  	ControllerInterface[] cc=cp.getControllerList();
+//		UUtil.log("cp.getControllerList = "+cc.length);
+	  	UDataText txt=new UDataText();
+//	  	
+//	  int currID=0,cnt=0;
+//	  int taken[]=new int[cc.length];
+//	  for(int i=cnt; i<cc.length; i++) taken[i]=-1;
+//	  
+//	  while(cnt<cc.length) {
+//			for(int i=0; i<cc.length; i++) {
+//				int id=cc[i].id();
+//				
+//				UUtil.log("currID "+currID+" "+id+" "+currID+" "+cnt);
+//				if(taken[id]<0 && id<=currID) {
+//					taken[id]=1;
+//					currID++;
+//					cnt++;
+					
+	  int i=0;
+  	for(GUINode n: nodes) {
+  		if(n.isNewRow) txt.add("NEWROW").endLn();
+  		else {
+  			int id=n.id;  			
+				UUtil.log("Found: "+id+" "+n.name);
+				if(n.type==SLIDER) {
+					Slider sl=(Slider)n.control;
+		  		UUtil.log(i+"| "+sl.name()+txt.DELIM+sl.value()+" "+sl.id()+" "+n.id);
+		  		txt.add(sl.name()).add(sl.id()).add(n.type).
+		  			add(sl.value()).add(sl.min()).add(sl.max()).endLn();
+				}
+				if(n.type==BUTTON) {
+					Button b=(Button)n.control;
+		  		txt.add(b.name()).add(b.id()).add(n.type).endLn();				
+				}
+				if(n.type==TOGGLE) {
+					Toggle b=(Toggle)n.control;
+		  		txt.add(b.name()).add(b.id()).add(n.type).add(b.getState()).endLn();				
+				}
+				
+				i++;
+			}
+
+		}
+
+		String [] res=txt.toArray();
+		UUtil.logDivider("USimpleGUI");
+		UUtil.log(res);
+		UUtil.logDivider();
+		
+		return res;
+		
+  }
+  public void loadFromString(String[] guistr,boolean recreate) {
+  	UUtil.log("guistr.length "+guistr.length);
+		UDataText txt=new UDataText(guistr);
+		loadFromFile(txt,recreate);
+  }
+  
+	public void loadFromFile(UDataText txt,boolean recreate) {
+		int res=-1;
+		String name;
+		int type,id;
+		
+		do{
+			res=txt.parseString();
+			UUtil.log(txt.parseLine+" "+res+" '"+txt.parseStr+"'");
+			if(res==txt.TOKENSTR) {
+				if(txt.parseStr.equals("NEWROW")) {
+					if(recreate) newRow();
+				}
+				else {
+					name=txt.getString();
+					id=txt.getInt();
+					type=txt.getInt();
+					UUtil.log(name+" "+id+" "+type);
+					
+					if(recreate) {
+						if(type==BUTTON) addButton(name);
+						if(type==TOGGLE) addToggle(name,txt.getBool());
+						if(type==SLIDER) addSlider(name, txt.getFloat(), txt.getFloat(), txt.getFloat());
+					}
+					if(type==SLIDER) {
+						Slider sl=(Slider)cp.controller(name);
+						sl.setValue(txt.getFloat());
+						sl.setMin(txt.getFloat());
+						sl.setMax(txt.getFloat());
+					}
+				}
+			}
+		} while(res==txt.TOKENSTR);
+	}
+
   public void saveToFile(String fname) {
   	UDataText txt=new UDataText();
   	
@@ -290,27 +437,10 @@ public class USimpleGUI {
   	txt.save(fname);
   }
   
-  public void readFromFile(String fname) {
-  	UDataText txt=UDataText.loadFile(fname);
-  	txt.silent=true;
-  	
-//  	Util.log("txt = "+txt.numStr);
-  	txt.beginParse();
-  	for(int i=0; i<txt.numStr; i++) {
-  		txt.parseTokenString();
-  		Controller cc=cp.controller(txt.getString());
-  		txt.getString();
-  		cc.setValue(txt.getFloat());
-  		cc.setMin(txt.getFloat());
-  		cc.setMax(txt.getFloat());
-  	}
-//  	txt.save(fname);
-  }
-  
   class GUINode {
   	public boolean isGroup;
 		String name,className;
-  	float width,height,posx,posy,paddingTop;
+  	int width,height,type,id,posx,posy,paddingTop;
   	boolean isNewRow;
   	Object o;
   	Controller control=null;
@@ -324,16 +454,20 @@ public class USimpleGUI {
   			
   			try {
   				control=(Controller)o;
+  				type=getType(control);
+  				id=control.id();
   			} catch(Exception e) {
-  				UUtil.logErr(e.getMessage());
+//  				UUtil.logErr(e.getMessage());
   			}
 
   			try {
   				group=(ControllerGroup)o;
   				if(className.contains("Drop")) paddingTop=group.getHeight();
   				isGroup=true;
+  				type=getType(group);
+  				id=control.id();
   			} catch(Exception e) {
-  				UUtil.logErr(e.getMessage());
+//  				UUtil.logErr(e.getMessage());
   			}
   		}
   		else {
@@ -350,7 +484,7 @@ public class USimpleGUI {
 			height+=padding*2;
 		}
 
-		public void setPos(float cpx, float cpy) {
+		public void setPos(int cpx, int cpy) {
 			if(isNewRow) return;
 			
 			posx=cpx;
@@ -394,6 +528,7 @@ public class USimpleGUI {
   	if(cp==null) return false;
   	return cp.window(p).isMouseOver();
   }
+
 
 }
 

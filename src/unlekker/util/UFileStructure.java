@@ -96,6 +96,17 @@ public class UFileStructure implements Runnable {
 			}
 	}
 	
+	public void searchFiles(String pattern,ArrayList<UFileNode> results, boolean doLowercase) {
+		if(file==null || file.size()<1) return; 
+		for(UFileNode f : file) {
+			if(doLowercase) 
+				if(f.name.toLowerCase().matches(pattern.toLowerCase()))
+						results.add(f);
+			if(f.name.matches(pattern)) results.add(f);
+			
+		}
+	}
+	
 	public void saveCSV(String filename) {
 		UDataText dat=new UDataText();
 		UUtil.logDivider("Save CSV - "+processQueue.processQueue.size());

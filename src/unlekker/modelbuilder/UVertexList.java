@@ -61,13 +61,26 @@ public class UVertexList implements UConstants {
 	/**
 	 * Parses a VertexList from the string produced by VertexList.toDataString().
 	 */
-	public UVertexList(String in) {
+	public static UVertexList parse(String in) {
+		UVertexList vl=null;
+		
+		try {
+			vl=new UVertexList();
 //		UUtil.log("UVertexList(String in) "+in);
-		in=UUtil.chopBraces(in).replaceAll(">,<", ">\t<");
-		String [] tok=PApplet.split(in, "\t");
-//		UUtil.log(Str.toString(tok));
-		v=new UVec3[tok.length];
-		for(int i=0; i<tok.length; i++) add(UVec3.parse(tok[i]));		
+			in=UUtil.chopBraces(in).replaceAll(">,<", ">\t<");
+//			UUtil.log("UVertexList(String in) "+in);
+			String [] tok=PApplet.split(in, "\t");
+//		UUtil.log(UUtil.toString(tok));
+			for(int i=0; i<tok.length; i++) {
+				vl.add(UVec3.parse(tok[i]));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}		
+		
+		return vl;
 	}
 
 	/**
@@ -383,7 +396,8 @@ public class UVertexList implements UConstants {
 		}
 		
 		System.arraycopy(v, id, v, id+1, n-id);
-		v[id]=new UVec3(x,y,z);				
+		v[id]=new UVec3(x,y,z);	
+		n++;
 		
 		return this;
 	}
@@ -493,7 +507,7 @@ public class UVertexList implements UConstants {
 		for(int i=0; i<n; i++) {
 			id[0][i]=i;
 			id[1][i]=vlnew.addGetID(v[i]);
-			UUtil.log(i+" "+id[0][i]+" "+id[1][i]);
+//			UUtil.log(i+" "+id[0][i]+" "+id[1][i]);
 			if(id[1][i]!=i) dupes++;
 		}
 		

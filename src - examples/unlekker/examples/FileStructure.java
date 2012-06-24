@@ -16,6 +16,7 @@ public class FileStructure extends PApplet {
 		
 		gui=new USimpleGUI(this);
 		gui.addButton("scan");
+		gui.addTextField("input", 150, 20);
 		
 		
 		

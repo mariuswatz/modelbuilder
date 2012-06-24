@@ -35,10 +35,10 @@ import unlekker.util.*;
  */
 public class UNav3D {
 	public PApplet p;
-	public UVec3 rot,trans;
+	public UVec3 rot,trans,rotReset,transReset;
 	public float rotSpeed=5,transSpeed=5;
 	public boolean isParentPApplet=true;
-	public boolean shiftIsDown=false;
+	public boolean shiftIsDown=false,altIsDown,ctrlIsDown;
 	public USimpleGUI gui;
 	public boolean enabled=true;
 	
@@ -65,6 +65,8 @@ public class UNav3D {
 		if(p.getClass().getSimpleName().equals("unlekker.app.App")) isParentPApplet=false;
 		rot=new UVec3(0,0,0);
 		trans=new UVec3(0,0,0);		
+		rotReset=new UVec3(0,0,0);
+		transReset=new UVec3(0,0,0);		
 		if(_doEvents) {
 		  // code to allow us to use the mouse wheel
 		  registerEvents();
@@ -131,7 +133,14 @@ public class UNav3D {
 		
   	float mult=1;
   	if(p.keyEvent!=null && p.keyEvent.isControlDown()) mult=10; 
-
+  
+  	if(p.mouseButton==p.RIGHT && ctrlIsDown) {
+  		rot.z+=p.radians(p.mouseX-p.pmouseX)*1*transSpeed;
+  	}
+  	else if(p.mouseButton==p.RIGHT && !(shiftIsDown || ctrlIsDown)) {
+      trans.z+=p.radians(p.mouseY-p.pmouseY)*30*transSpeed*mult;
+      return ;
+  	}
 //		if(isParentPApplet) {
 //      rot.y+=p.radians(p.mouseX-p.pmouseX);
 //      rot.x+=p.radians(p.mouseY-p.pmouseY);
@@ -156,12 +165,28 @@ public class UNav3D {
   		shiftIsDown=false;
 //  		UUtil.log("Shift released");
   	}
+  	if(p.key==p.CODED && p.keyCode==p.CONTROL) {
+  		ctrlIsDown=false;
+//  		UUtil.log("Shift released");
+  	}
+  	if(p.key==p.CODED && p.keyCode==p.ALT) {
+  		altIsDown=false;
+//  		UUtil.log("Shift released");
+  	}
   }
 
   public void keyPressed() {
   	if(p.key==p.CODED && p.keyCode==p.SHIFT) {
   		shiftIsDown=true;
 //  		UUtil.log("Shift down");
+  	}
+  	if(p.key==p.CODED && p.keyCode==p.CONTROL) {
+  		ctrlIsDown=true;
+//  		UUtil.log("Shift released");
+  	}
+  	if(p.key==p.CODED && p.keyCode==p.ALT) {
+  		altIsDown=true;
+//  		UUtil.log("Shift released");
   	}
   	
   	float mult=1;
@@ -191,6 +216,8 @@ public class UNav3D {
         if(p.keyCode==p.RIGHT) rot.y+=p.radians(rotSpeed*mult);
         if(p.keyCode==p.LEFT) rot.y-=p.radians(rotSpeed*mult);
       }
+      
+      if(ctrlIsDown && p.keyCode==KeyEvent.VK_HOME) reset();
     }
     else {
       if(p.keyEvent.isControlDown()) {
@@ -203,39 +230,41 @@ public class UNav3D {
 
 	public UNav3D reset() {
 		p.println("Reset transformations.");
-		trans.set(0,0,0);
-		rot.set(0,0,0);
+		trans.set(transReset);
+		rot.set(rotReset);
 	  return this;
 	}
   
   public UNav3D setTranslation(UVec3 vv) {
-	  trans.set(vv);
-	  return this;
+	  return setTranslation(vv.x,vv.y,vv.z);
   }
 
   public UNav3D set(UNav3D nv) {
-	  trans.set(nv.trans);
-	  rot.set(nv.rot);
+	  setTranslation(nv.trans);
+	  setRotation(nv.rot);
 	  return this;
   }
 
   public UNav3D setTranslation(float x,float y,float z) {
 	  trans.set(x,y,z);
+	  transReset.set(trans);
 	  return this;
   }
 
   public UNav3D setRotation(UVec3 vv) {
-	  rot.set(vv);
+  	setRotation(vv.x,vv.y,vv.z);
 	  return this;
   }
 
   public UNav3D setRotation(float x,float y,float z) {
 	  rot.set(x,y,z);
+	  rotReset.set(rot);
 	  return this;
   }
 
   public UNav3D addRotation(float x,float y,float z) {
 	  rot.add(x,y,z);
+	  rotReset.set(rot);
 	  return this;
   }
 
@@ -271,6 +300,7 @@ public class UNav3D {
 	}
 
 	public void set(String s) {
+		s=s.substring(5,s.length()-1);
 		UUtil.log("UNav3D.set '"+s+"'");
 		String tok[]=p.split(s, ' ');
 		trans=UVec3.parse(tok[1]);
