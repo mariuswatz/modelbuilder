@@ -59,13 +59,8 @@ public class UBBox {
   	return this;
 	}
 	
-	public void addBBox(UBBox bb) {
-		min.x= min.x > bb.min.x ? bb.min.x : min.x; 
-		min.y= min.y > bb.min.y ? bb.min.y : min.y; 
-		min.z= min.z > bb.min.z ? bb.min.z : min.z; 
-		max.x= max.x < bb.max.x ? bb.max.x : max.x; 
-		max.y= max.y < bb.max.y ? bb.max.y : max.y; 
-		max.z= max.z < bb.max.z ? bb.max.z : max.z; 
+	public UBBox addBBox(UBBox bb) {
+		return add(bb.min).add(bb.max);
 	}
 	
 	public UBBox add(UVec3 v) {
@@ -114,7 +109,7 @@ public class UBBox {
 	public String toString() {
 		String s="BB: c="+c.toString()+
 		" min="+min.toString()+
-		" max="+max.toString();
+		" max="+max.toString()+" sz "+sz.toString();
 		
 		return s;
 	}
@@ -145,6 +140,10 @@ public class UBBox {
 		min.mult(m);
 		max.mult(m);		
 		finishCalc();
+	}
+
+	public void add(UBBox bb) {
+		addBBox(bb);		
 	}
 
 }

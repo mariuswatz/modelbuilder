@@ -298,6 +298,9 @@ public class UUtil implements UConstants {
   	if(logger==null) try {
   		Calendar cal=Calendar.getInstance();
   		
+    	
+			logDivider("Added log file output: '"+logFilename+"'");
+			
     	logFilename=filename;   	
 //    	java.util.logging.ConsoleHandler.level=NONE;
     	logger=Logger.getLogger("Util");
@@ -327,8 +330,6 @@ public class UUtil implements UConstants {
     	
     	logger.addHandler(logHandler);
     	logHandler.setFormatter(logUtil);
-    	
-			logDivider("Added log file output: '"+logFilename+"'");
 //    	log("Log started: "+timeStr(cal));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1298,6 +1299,12 @@ public class UUtil implements UConstants {
 	static public String nf(int num, int digits) {
 		if (formatInt==null) nfInitFormats();
 		formatInt.setMinimumIntegerDigits(digits);
+		return formatInt.format(num);
+	}
+
+	static public String nf(int num) {
+		if (formatInt==null) nfInitFormats();
+		formatInt.setMinimumIntegerDigits(3);
 		return formatInt.format(num);
 	}
 

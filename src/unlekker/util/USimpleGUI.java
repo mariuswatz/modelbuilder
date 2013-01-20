@@ -39,7 +39,7 @@ public class USimpleGUI {
 
   public void draw() {
   	if(!enabled) return;
-  	p.rectMode(p.CORNER);
+//  	p.rectMode(p.CORNER);
   	
   	if(!layoutCalculated) {
   		UUtil.log("USimpleGUI.setLayout() not called - setting vertical layout.");
@@ -158,7 +158,7 @@ public class USimpleGUI {
   public USimpleGUI addSlider(
       String name, int val, int min, int max) {
 
-      Controller tmp=cp.addSlider(name, min, max, val, 0,0, 100, 15);
+      Controller tmp=cp.addSlider(name, min, max, val, 0,0, sliderW, 15);
 //      addNode(tmp, name,tmp.getWidth()+name.length()*charWidth-9,tmp.getHeight()-1);
       addNode(tmp, name,tmp.getWidth()+tmp.captionLabel().width(),tmp.getHeight());
       
@@ -528,6 +528,11 @@ public class USimpleGUI {
   	if(cp==null) return false;
   	return cp.window(p).isMouseOver();
   }
+
+	public boolean hasController(String string) {
+		if(cp.controller(string)!=null) return true;
+		return false;
+	}
 
 
 }

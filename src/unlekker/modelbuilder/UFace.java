@@ -284,6 +284,13 @@ public class UFace implements UConstants, Comparable<UFace> {
 		return mid;
 	}
 
+	public UVec3 calcRandomPoint() {
+		UVec3 vv=UVec3.interpolate(v[1], v[2], UUtil.rnd.random(1));
+		vv=UVec3.interpolate(v[0], vv, UUtil.rnd.random(1));
+		return vv;
+	}
+	
+	
 	public UVec3 calcCentroid() {
 		centroid=new UVec3();
 		if(v==null) getVertices();
@@ -364,10 +371,10 @@ public class UFace implements UConstants, Comparable<UFace> {
 	 * is used to compare vertices.
 	 */
 	public int compareTo(UFace o) {
-		if(o.vid!=null && vid!=null) {
-			if(o.vid[0]==vid[0] && o.vid[1]==vid[1] && o.vid[2]==vid[2]) return 0;
-			return -1;
-		}
+//		if(o.vid!=null && vid!=null) {
+//			if(o.vid[0]==vid[0] && o.vid[1]==vid[1] && o.vid[2]==vid[2]) return 0;
+//			return -1;
+//		}
 		
 		if(o.v[0].equals(v[0]) && o.v[1].equals(v[1]) && o.v[2].equals(v[2])) 
 			return 0;

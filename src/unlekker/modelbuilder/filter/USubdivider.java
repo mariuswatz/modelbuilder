@@ -2,12 +2,14 @@ package unlekker.modelbuilder.filter;
 
 import java.util.ArrayList;
 
+import processing.core.PApplet;
+
 import unlekker.modelbuilder.*;
 import unlekker.util.UProgressInfo;
 import unlekker.util.UUtil;
 
 public class USubdivider extends UFilter {
-	public int type;
+	public int type,multiN;
 	public float maxSurfaceArea=-1;
 	public float maxEdgeLength=-1;
 	
@@ -18,6 +20,12 @@ public class USubdivider extends UFilter {
 
 	public USubdivider setType(int _type) {
 		type=_type;
+		return this;
+	}
+	
+	public USubdivider setMultiRes(int res) {
+		multiN=res;
+		
 		return this;
 	}
 	
@@ -107,13 +115,56 @@ public class USubdivider extends UFilter {
 			nf[1]=new UFace(f.v[1], f.v[2],c);
 			nf[2]=new UFace(f.v[2], f.v[0],c);
 		}
-		else {
+		else if(type==SUBDIVIDE_MIDPOINTS){
 			UVec3 mid[]=f.calcMidEdges();
 			nf=new UFace[4];
 			nf[0]=new UFace(f.v[0], mid[0], mid[2]);
 			nf[1]=new UFace(mid[0], f.v[1],mid[1]);
 			nf[2]=new UFace(mid[0], mid[1],mid[2]);
 			nf[3]=new UFace(mid[2], mid[1],f.v[2]);
+		}
+		else if(type==SUBDIVIDE_MULTI){
+			if(multiN<2) multiN=2; 
+			int realN=multiN+1;
+			
+			UVertexList vl[]=new UVertexList[realN];
+			UVertexList edge1=UVec3.interpolateMultiple(f.v[0], f.v[1], realN);
+			UVertexList edge2=UVec3.interpolateMultiple(f.v[0], f.v[2], realN);
+			
+			vl[0]=new UVertexList().add(edge1.first());
+			
+			for(int i=1; i<realN; i++) vl[i]=UVec3.interpolateMultiple(edge1.v[i], edge2.v[i], i+1);
+
+			UGeometry gg=new UGeometry();
+			gg.noDuplicates();
+			
+			UVec3 vv[]=new UVec3[3];
+			
+			gg.add(new UFace(vl[1].v[0],vl[1].v[1],vl[0].v[0]));
+			for(int i=2; i<realN; i++) {
+				UVertexList v1=vl[i],v2=vl[i-1];
+				for(int j=0; j<v1.n-1; j++) {
+					vv[0]=v1.v[j];
+					vv[1]=v1.v[j+1];
+					vv[2]=v2.v[j];
+					gg.addFace(vv);
+						
+					if(j>0) {
+						vv[0]=v1.v[j];
+						vv[1]=v2.v[j];
+						vv[2]=v2.v[j-1];
+						gg.addFace(vv);
+					}
+				}
+			}
+			
+//			UUtil.log(gg.vert.toDataString());
+
+//			gg.removeDuplicateVertices();
+			
+			nf=(UFace[])UUtil.expandArray(gg.face,gg.faceNum);
+			UUtil.log(gg.faceNum+" "+gg.face.length);
+			UUtil.log(UUtil.toString(gg.face));
 		}
 		
 		return nf;

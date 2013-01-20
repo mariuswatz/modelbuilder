@@ -1,5 +1,6 @@
 package unlekker.util;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.lang.reflect.InvocationTargetException;
@@ -44,10 +45,6 @@ public class UApp extends UAppBase implements UConstants {
 		if(cam!=null) cam.setGUI(gui);
 	}
 	
-	public void controlEvent(ControlEvent ev) {
-		if(cam!=null) cam.controlEvent(ev);
-	}
-
 	public void addCam(int viewNum) {
 		cam=new UCameraTransition(p).setViewNum(viewNum);
 		if(gui!=null) cam.addGUI(gui);
@@ -80,7 +77,11 @@ public class UApp extends UAppBase implements UConstants {
 		}
 		
 		if(gui!=null) {
+			p.rectMode(p.CORNER);
 			gui.draw();
+			
+//			p.fill(255,0,0);
+//			p.rect(0,0, 5,5);
 		}
 	}
 	
@@ -162,8 +163,19 @@ public class UApp extends UAppBase implements UConstants {
   }
 
   public void keyPressed() {
+  	int val=p.keyCode-KeyEvent.VK_F1;
+  	if(val>-1 && val<10 && sketch[val]!=null) {
+  		switchToSketchID=val;
+  	}
   	if(sketchCurrent!=null) sketchCurrent.keyPressed();
   }
+
+	public void controlEvent(ControlEvent ev) {
+//		p.println("UApp controlEvent");
+
+		if(cam!=null) cam.controlEvent(ev);
+		if(sketchCurrent!=null) sketchCurrent.controlEvent(ev);
+	}
 
 
 	public float getCamT() {

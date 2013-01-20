@@ -58,6 +58,15 @@ public class UVertexList implements UConstants {
 //		UUtil.log("vl "+n+" "+_vl.n+" "+_vl.toDataString());
 	}
 
+	public UVertexList(UVec3[] vv) {
+		v=new UVec3[100];
+		add(vv);
+	}
+
+	public UVertexList getCopy() {
+		return new UVertexList(this);
+	}
+	
 	/**
 	 * Parses a VertexList from the string produced by VertexList.toDataString().
 	 */
@@ -99,6 +108,22 @@ public class UVertexList implements UConstants {
 		
 		return vl;
 	}
+	
+	/**
+	 * Extract a list of vertices from an array of <code>UVertexList</code> objects, taking one vertex from each list at 
+	 * the position given by the parameter <code>index</code>. Assumes all lists in the array contain the same number of vertices.
+	 * @param index Position in vertex list to extract
+	 * @param vl
+	 * @return
+	 */
+	public static UVertexList extractFromArray(int index,UVertexList vl[]) {
+		UVertexList ext=new UVertexList();
+		for(int i=0; i<vl.length; i++) {
+			ext.add(vl[i].v[index]);
+		}
+		
+		return ext;
+	}
 
 	/**
 	 * Creates and returns an array of n empty UVertexLists.
@@ -111,15 +136,6 @@ public class UVertexList implements UConstants {
 		return vl;
 	}
 
-	public static UVertexList mergeToQS(UVertexList vl1,UVertexList vl2) {
-		UVertexList tmp=new UVertexList();
-		for(int i=0; i<vl1.n; i++) {
-			tmp.add(vl1.v[i]);
-			tmp.add(vl2.v[i]);
-		}
-		return tmp;
-	}
-	
 	/*
 	 *  Reorders a vertex list organized as a QUAD_STRIP duplets of vertices, so that it forms an outline path instead. The logic is as follows:
 	 *  <pre>
@@ -200,8 +216,11 @@ public class UVertexList implements UConstants {
 	public void draw(PGraphics p) {
 		int id=0;
 
-		if(p.getClass().getSimpleName().equals("PGraphicsJava2D")) {
+		String cl=p.getClass().getName();
+//		if(!cl.equals(p.JAVA2D)) 
+		if(cl.equals(p.JAVA2D) || cl.equals(p.PDF)) {
 			p.beginShape();		
+			
 			for(int i=0; i<n; i++) {						
 				p.vertex(v[id].x,v[id++].y);
 			}
@@ -228,6 +247,14 @@ public class UVertexList implements UConstants {
 		return this;
  	}
 
+	
+	public UVec3 calcCentroid() {
+		UVec3 c=new UVec3();
+		for(int i=0; i<n; i++) c.add(v[i]);
+		c.div(n);
+		
+		return c;
+	}
 	/**
 	 * Calculates bounding box
 	 * @return Returns reference to self
@@ -447,7 +474,7 @@ public class UVertexList implements UConstants {
 	public UVertexList add(UVec3 _v) {
 		if(doNoDuplicates) {
 			for(int i=0; i<n; i++) if(v[i].cmp(_v)) {
-				UUtil.log("Duplicate");
+//				UUtil.log("Duplicate");
 				return this;
 			}
 		}
@@ -467,6 +494,12 @@ public class UVertexList implements UConstants {
 		for(int i=0; i<_n; i++) add(_v[i]);
 		return this;
 	}
+	
+
+	public UVertexList add(UVec3[] vv) {
+		return add(vv,vv.length);
+	}
+
 
 	public UVertexList insert(int _id,UVec3 v) {
 		return remove(0,1);
@@ -696,6 +729,24 @@ public class UVertexList implements UConstants {
 		return res;
 	} 
 	
+	public UVec3[] getDeltaVectors() {
+		UVec3[] delta=new UVec3[n];
+		
+		for(int i=0; i<n-1; i++) delta[i]=new UVec3(v[i+1]).sub(v[i]);
+		delta[n-1]=new UVec3(delta[n-2]);
+		
+		return delta;
+	}
+
+	public UVec3[] getHeadingAngles() {
+		UVec3[] delta=getDeltaVectors();
+		UVec3[] head=new UVec3[delta.length];
+		
+		for(int i=0; i<delta.length; i++) head[i]=UVec3.getHeadingAngles(delta[i]);
+		
+		return head;
+	}
+
 	public UVertexList getTangents2D() {		
 		return getTangents2D(0, n);
 	}
@@ -712,28 +763,10 @@ public class UVertexList implements UConstants {
 		}
 		vtan[end-1].set(vtan[end-2]).norm();
 		
-//		int nn=vtan.length;
-//		UVec3[] tmp=new UVec3[nn];
-//		for(int i=0; i<nn; i++) {
-//			if(isClosed) {
-//				if(i==0) tmp[0]=new UVec3(vtan[0]).add(vtan[nn-1]).add(vtan[1]).div(3);
-//				else if(i==nn-1) tmp[i]=new UVec3(vtan[i]).add(vtan[i-1]).add(vtan[0]).div(3);
-//				else tmp[i]=new UVec3(vtan[i]).add(vtan[i-1]).add(vtan[i+1]).div(3);
-//			}
-//			else {
-//				if(i==0) tmp[0]=new UVec3(vtan[0]).add(vtan[i+1]).div(2);
-//				else if(i==nn-1) tmp[i]=new UVec3(vtan[i]).add(vtan[i-1]).div(2);
-//				else tmp[i]=new UVec3(vtan[i]).add(vtan[i-1]).add(vtan[i+1]).div(3);
-//			}
-//
-//		}
-//		
-//		vtan=tmp;
-		
 		return this;
 	}
 	
-	public void drawTangents(PApplet p,float len) {
+	public void drawTangents2D(PApplet p,float len) {
 		if(vtan==null) return;
 		p.beginShape(p.LINES);
 		for(int i=0; i<n; i++) {
@@ -1014,11 +1047,6 @@ public class UVertexList implements UConstants {
 	 */
 	public UVertexList close() {
 		return add(v[0]);		
-	}
-
-	public UVertexList add(UVec3[] vv) {
-		for(int i=0; i<vv.length; i++) add(vv[i]);
-		return this;
 	}
 
 	/**

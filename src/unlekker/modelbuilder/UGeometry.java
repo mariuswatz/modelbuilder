@@ -24,6 +24,7 @@ package unlekker.modelbuilder;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -430,7 +431,7 @@ public class UGeometry implements UConstants {
       case QUADS: {
         int stop = bvCnt-3;
         for (int i = 0; i < stop; i += 4) {
-        	addFace(new UVec3[] {bv[i],bv[i+3],bv[i+1],bv[i+2]});
+        	addFace(new UVec3[] {bv[i],bv[i+1],bv[i+2],bv[i+3]});
         }
       }
       break;
@@ -564,6 +565,7 @@ public class UGeometry implements UConstants {
 		if(vv.length==4) type=QUAD;
 		
 		int id[]=addVerticesToMasterList(vv);
+//		UUtil.log(UUtil.toString(vv)+" "+UUtil.toString(id));
 		
 		if(type==TRIANGLE) {
 			if(face==null) face=new UFace[100];
@@ -630,21 +632,38 @@ public class UGeometry implements UConstants {
 		return this;
 	}
 	
-	public void noDuplicates() {
+	public UGeometry noDuplicates() {
 		doNoDuplicates=true;
+		return this;
 		
 	}
 	
 	public void removeDuplicateFaces() {
 		boolean ok;
+		int dupes=0;
+		
 		for(int i=1; i<faceNum; i++) {
 			for(int j=i; j<faceNum; j++) {
-				if(i!=j && face[i].compareTo(face[j])==0) {
-					UUtil.log("Duplicate found."+face[j].toString());
-					face[j].translate(0, 0, UUtil.rnd.random(-100, 100));
+				if(i!=j && face[j]!=null && face[i]!=null &&
+						face[i].compareTo(face[j])==0) {
+//					UUtil.log("Duplicate found."+face[j].toString());
+					dupes++;
+					face[j]=null;
+//					face[j].translate(0, 0, UUtil.rnd.random(-100, 100));
 				}
 			}
 		}
+		
+		ArrayList<UFace> ff=new ArrayList<UFace>();
+		
+		for(int i=0; i<faceNum; i++) {
+			if(face[i]!=null) ff.add(face[i]);
+		}
+
+		faceNum=0;
+		for(UFace newf:ff) add(newf); 
+		
+		UUtil.log("Duplicates found: "+dupes);//face[j].toString());
 	}
 	
 	/**
@@ -1142,6 +1161,7 @@ public class UGeometry implements UConstants {
   	UFace f;
   	
     try {
+    	if(!filename.toLowerCase().endsWith("stl")) filename+=".stl";
 //    	FileOutputStream out=(FileOutputStream)IO.getOutputStream(filename);
     	FileOutputStream out=(FileOutputStream)UIO.getOutputStream(p.sketchPath(filename));
 
@@ -1563,6 +1583,9 @@ public class UGeometry implements UConstants {
 		return (UFace [])UUtil.resizeArray(f, fn);
 	}
 	
+	
+	
+
 	public String toString() {
 		String s="UGeometry: f="+faceNum+" q="+quadNum+" v="+vert.n;
 		if(bb!=null) s+=" "+bb.toString();

@@ -10,7 +10,7 @@ import unlekker.modelbuilder.UVec3;
 
 public class UColorTool {
 	public int n=-1,colors[];
-	ArrayList<UColorNode> colorNodes=new ArrayList<UColorTool.UColorNode>();
+	public ArrayList<UColorNode> colorNodes=new ArrayList<UColorTool.UColorNode>();
 	
 	///////////////////////////////////////////
 	// PALETTE FUNCTIONS

@@ -10,15 +10,16 @@ public class UCameraTransition {
 	public UNav3D nav;
 	public boolean isPaused;
 
-	public boolean isRunning;
+	public boolean isRunning,isFirstFrame;
 	public UNav3D cam[],theCam;
 	public float camT,camCnt,camGoal;
 	public int interpType=-1;
 	static public int INTERSIGISMOID=0,INTEREXPEASE=1,
 		INTERDBLSIGISMOID=2,INTEREASEIN=3,INTERQUAD=4,INTEREASEINOUT=5;
 	long startRenderTime;
-	UProgressInfo progress=new UProgressInfo();
+	public UProgressInfo progress=new UProgressInfo();
 	private int viewNum;
+	public UApp app;
 
 	public UCameraTransition(PApplet _p,UNav3D _nav,String s) {
 		p=_p;		
@@ -47,7 +48,15 @@ public class UCameraTransition {
 	}
 
 	public void run() {
+		if(isRunning) {
+			stop();
+			return;
+		}
+		
+		if(app!=null) app.sketchCurrent.rewind();
+		
 		isRunning=true;
+		isFirstFrame=true;
 		UUtil.log("Transition.run() "+camGoal);
 		
 		startRenderTime=System.currentTimeMillis();
@@ -56,6 +65,7 @@ public class UCameraTransition {
 //		p.startMovie();
 		
 		camCnt=0;
+		camT=0;
 //		p.keyEvent.setModifiers(p.keyEvent.CTRL_DOWN_MASK);
 //		p.keyCode=p.keyEvent.VK_R;
 //		p.keyPressed();
@@ -90,6 +100,10 @@ public class UCameraTransition {
   	cam[id].set(in); 
   }  	
   
+	public void setApp(UApp app) {
+		this.app=app;
+	}
+	
 	public void setGUI(USimpleGUI gui) {
 		this.theCam.setGUI(gui);
 	}
@@ -118,6 +132,7 @@ public class UCameraTransition {
 //			camT=camT*camT*camT;
 //			p.control.status("T "+UUtil.nf(camT));
 			doCam();
+			nav.set(theCam);
 			
 			if(camT>=1) {
 				camCnt=camGoal;
@@ -131,6 +146,7 @@ public class UCameraTransition {
 //				Util.log(s+" "+theCam.toStringData());
 			}
 					
+			if(camCnt>1) isFirstFrame=false;
 		}
 
 	}
@@ -148,13 +164,14 @@ public class UCameraTransition {
 	t--;
 	return -c/2 * (t*(t-2) - 1) + b;
 		 */
-		
-		T*=2;
-		if(T<1) T=0.5f*T*T;
-		else {
-			T-=1;
-			T=-0.5f*(T*(T-2)-1);
-		}
+
+		T=UUtil.interExpEase(T, 0.2f);
+//		T*=2;
+//		if(T<1) T=0.5f*T*T;
+//		else {
+//			T-=1;
+//			T=-0.5f*(T*(T-2)-1);
+//		}
 		
 //		T*=2;
 //		if(T<1) T=0.5f*T*T*T;
@@ -222,6 +239,8 @@ public class UCameraTransition {
 		for(int i=0; i<labels.length; i++) labels[i]="Set view "+(i+1);
 		gui.addDropDown("camSetView", labels, 120);
 		gui.cp.group("camSetCam").setOpen(true);
+		gui.addButton("run");
+		gui.addButton("stop");
 		
 	}
 
@@ -234,6 +253,10 @@ public class UCameraTransition {
 	  	if(val.equalsIgnoreCase("set view 1")) setView(0);
 	  	if(val.equalsIgnoreCase("set view 2")) setView(1);
 	  	ev.group().setOpen(true);
+	  }
+	  else {
+	  	if(ev.controller().name().equals("run")) run();
+	  	if(ev.controller().name().equals("stop")) stop();
 	  }
 
 		

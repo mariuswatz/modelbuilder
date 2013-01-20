@@ -25,11 +25,22 @@ public class UQuad extends UFace implements UConstants {
 		getVertices();
 	}
 
+	/**
+	 * Returns vertices in order: Top left, bottom left, top right, bottom right
+	 */
 	public UVec3 [] getVertices() {
 		v=new UVec3[] {f1.v[0],f1.v[2],f1.v[1],f2.v[2]};
 		return v;
 	}
-	
+
+	/**
+	 * Returns vertices in order: Top left, top right, bottom right, bottom left, 
+	 */
+	public UVec3 [] getVerticesRadial() {
+		v=new UVec3[] {f1.v[2],f2.v[2],f1.v[1],f2.v[0]};
+		return v;
+	}
+
 	public UQuad(UGeometry _parent, UVec3[] vv) {
 		parent=_parent;
 //		int id[]=parent.addVerticesToMasterList(vv);
@@ -175,6 +186,17 @@ public class UQuad extends UFace implements UConstants {
 			return 0;
 		
 		return -1; // no match
+	}
+	
+	public UFace [] subdivide() {
+		UFace [] ff=new UFace[4];
+		calcCentroid();
+		ff[0]=new UFace(v[0],centroid,v[1]);
+		ff[1]=new UFace(v[0],v[2],centroid);
+		ff[2]=new UFace(v[2],v[3],centroid);
+		ff[3]=new UFace(v[3],v[1],centroid);
+		
+		return ff;
 	}
 
 	public void draw(PApplet p) {

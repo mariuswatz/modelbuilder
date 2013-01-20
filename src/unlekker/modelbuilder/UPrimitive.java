@@ -4,7 +4,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import unlekker.util.*;
 
-public class UPrimitive implements PConstants {
+public class UPrimitive implements UConstants {
 	public static int SPHERE=1,BOX=2,CYL=3,CONE=4,DISC=5;
 	public int type;
 	private static int sphRes=-1;
@@ -51,7 +51,7 @@ public class UPrimitive implements PConstants {
 			vl[index++]=new UVertexList(ol).translate(w-(float)i*wd,0,d);
 		for(int i=1; i<nd; i++) 
 			vl[index++]=new UVertexList(ol).translate(0,0,d-(float)i*dd);
-		UUtil.log(UUtil.toString(vl));
+//		UUtil.log(UUtil.toString(vl));
 		geo.quadStrip(vl);
 		geo.quadStrip(vl[vl.length-1],vl[0]);
 		
@@ -87,6 +87,19 @@ public class UPrimitive implements PConstants {
 	  return ln;
 	}
 
+	public static UGeometry cyl2Points(UVec3 p1, UVec3 p2, float rad) {
+	  UVec3 dir=new UVec3(p2).sub(p1);
+	  float l=dir.length();
+//	  		UGeometry ln=UPrimitive.cylinder(rad,l/2,18,true).rotateZ(HALF_PI).translate(l/2,0,0);
+	  UGeometry ln=UPrimitive.cylinder(rad, l/2, 36,true).rotateZ(HALF_PI).translate(l/2, 0, 0);
+
+	  UVec3 head=UVec3.getHeadingAngles(dir);
+	  // to orient along heading angles we need to rotate first around Z (head.x) 
+	  // and then Y (head.y)
+	  ln.rotateZ(head.x).rotateY(head.y).translate(p1);
+
+	  return ln;
+	}
 
 	
 	public static UGeometry circleGrid(float w,int u,int v, boolean reversed) {
@@ -108,9 +121,9 @@ public class UPrimitive implements PConstants {
 		
 		
 		geo.quadStrip(vl,true);
-		UUtil.log("center.n "+center.n );
+//		UUtil.log("center.n "+center.n );
 		center.add(center.v[1]);
-		UUtil.log("center.n "+center.n +" "+center.toDataString());
+//		UUtil.log("center.n "+center.n +" "+center.toDataString());
 		geo.triangleFan(center, false, true);
 		
 		return geo;		
@@ -144,13 +157,15 @@ public class UPrimitive implements PConstants {
 
 	public static UGeometry rect(float w,float h) {
 		UGeometry g=new UGeometry();
-		g.beginShape(QUADS);
+		g.beginShape(QUAD_STRIP);
 		g.vertex(-w,-h,0);
+		g.vertex(-w,h,0);
 		g.vertex(w,-h,0);
 		g.vertex(w,h,0);
-		g.vertex(-w,h,0);
 		g.endShape();
 		
+		g.removeDuplicateVertices();
+		UUtil.log(g.vert.n+" "+g.faceNum);
 		return g;
 	}
 
@@ -228,14 +243,14 @@ public class UPrimitive implements PConstants {
 		g.beginShape(QUADS);
 		
 		g.vertex(-xdim,-ydim,-zdim);
+		g.vertex(-xdim,ydim,-zdim);
 		g.vertex(-xdim,-ydim,zdim);
 		g.vertex(-xdim,ydim,zdim);
-		g.vertex(-xdim,ydim,-zdim);
 
 		g.vertex(xdim,ydim,-zdim);
+		g.vertex(xdim,-ydim,-zdim);
 		g.vertex(xdim,ydim,zdim);
 		g.vertex(xdim,-ydim,zdim);
-		g.vertex(xdim,-ydim,-zdim);
 
 		g.endShape();
 		
@@ -464,6 +479,10 @@ public class UPrimitive implements PConstants {
       angle += angle_step;
     }
   }
+
+	public static UGeometry box(float rad) {		
+		return box(rad,rad,rad);
+	}
 
 
 	/*

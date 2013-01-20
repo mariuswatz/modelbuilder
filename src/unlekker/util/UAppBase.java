@@ -4,6 +4,8 @@ import java.awt.event.KeyEvent;
 
 import javax.media.opengl.GL;
 
+import controlP5.ControlEvent;
+
 import processing.core.PApplet;
 import processing.opengl.PGraphicsOpenGL;
 import unlekker.modelbuilder.UVec3;
@@ -51,12 +53,16 @@ public class UAppBase implements UConstants {
 	
 
   public void keyPressed() {
-  	log("keyPressed "+p.key+" "+p.keyCode);
   }
 
   public void keyReleased() {
   	
   }
+  
+	public void controlEvent(ControlEvent ev) {
+		
+	}
+
 
 	public void mouseWheelEvent(float step) {
 		// TODO Auto-generated method stub

@@ -9,7 +9,7 @@ public class UFilter implements UConstants {
 	public int geomN;
 	static public int VERTEX=0,RADIUS=1,WIDTH=2,HEIGHT=3,
 			FORCE=4,BEND=5,TWIST=6,TAPER=7,STACK=8;
-	static public int SUBDIVIDE_CENTROID=0,SUBDIVIDE_MIDPOINTS=1;
+	static public int SUBDIVIDE_CENTROID=0,SUBDIVIDE_MIDPOINTS=1,SUBDIVIDE_MULTI=2;
 
 	protected boolean changed;
 	protected int paramType[];

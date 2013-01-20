@@ -198,6 +198,13 @@ public class UDataText {
 		return this;
 	}
 
+	public UDataText add(ArrayList<String> s) {
+		for(String theString : s) {
+			if(theString!=null) addLn(theString);
+		}
+		return this;
+	}
+
 	public UDataText add(boolean b) {
 		if(dataLinePos>0) strbuf.append(SPACER+b);
 		else strbuf.append(""+b);
@@ -275,15 +282,17 @@ public class UDataText {
 		doAppend=false;
 	}
 
-	public void save() {
+	public UDataText save() {
 		save(filename,false);
+		return this;
 	}
 
-	public void save(String _filename) {
+	public UDataText save(String _filename) {
 		save(_filename,false);
+		return this;
 	}
 	
-	public void save(String _filename,boolean _append) {
+	public UDataText save(String _filename,boolean _append) {
 		setFileOptions(_filename, _append);
 	
 		try {
@@ -306,8 +315,9 @@ public class UDataText {
 		 e.printStackTrace();
 	  }
 	  
+		return this;
 	}
-	
+
 	public UDataText load(String _filename) {
   	String ln;
 		try {

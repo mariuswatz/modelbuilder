@@ -248,8 +248,8 @@ public class UIO implements Serializable, PConstants {
    */
 
   public static String noPath(String name) {
-  	int pos=name.lastIndexOf(DIRCHAR);
-  	if(pos<0) pos=name.lastIndexOf(DIRCHARDEFAULT);
+  	int pos=name.lastIndexOf('\\');
+  	if(pos<0) pos=name.lastIndexOf('/');
 //  	UUtil.log(pos+" "+name.length()+" "+name);
 
   	return name.substring(pos+1);
@@ -472,6 +472,9 @@ public class UIO implements Serializable, PConstants {
   	String s=null,numstr,last,list[];
   	String pre,post;
   	  	
+  	nameFormat=UIO.noExt(nameFormat);
+  	if(nameFormat.indexOf("#")==-1) nameFormat+=" ###";
+  	
   	filterReset();
   	filterPattern(nameFormat);
   	

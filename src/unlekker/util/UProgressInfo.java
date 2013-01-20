@@ -54,9 +54,9 @@ public class UProgressInfo {
 		}
 		
 		lastUpdate=UUtil.nf(perc,1,2)+"%";
-		if(_p!=null) lastUpdate+="	FPS: "+UUtil.nf(_p.frameRate,1,2);
-		lastUpdate=lastUpdate+" Elapsed: "+UUtil.timeStr(elapsed);
-		lastUpdate=lastUpdate+" Remain: "+UUtil.timeStr(estimated);
+		if(_p!=null) lastUpdate+=" FPS "+UUtil.nf(_p.frameRate,1,2);
+		lastUpdate=lastUpdate+" Elapsed "+UUtil.timeStr(elapsed);
+		lastUpdate=lastUpdate+" Remain "+UUtil.timeStr(estimated);
 
 		return lastUpdate;
 	}

@@ -47,7 +47,7 @@ public class UBezier3D {
 		v3=vl.v[id+2];
 		v4=vl.v[id+3];
 
-		UUtil.log(UUtil.nf(_t)+" "+seg+" "+UUtil.nf(t)+" "+id);
+//		UUtil.log(UUtil.nf(_t)+" "+seg+" "+UUtil.nf(t)+" "+id);
 
 		vv.set(
 				 v1.x*t0 + v2.x*t1 + v3.x*t2 + v4.x*t3,
