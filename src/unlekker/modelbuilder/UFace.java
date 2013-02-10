@@ -5,7 +5,7 @@ import unlekker.util.*;
 
 public class UFace implements UConstants, Comparable<UFace> {
 	public UVec3 v[],mid[],n,centroid;	
-	public int c[],vid[];
+	public int c,vid[];
 	public UGeometry parent;
 	
 	/**
@@ -325,6 +325,11 @@ public class UFace implements UConstants, Comparable<UFace> {
 				v[1].x-v[0].x,v[1].y-v[0].y,v[1].z-v[0].z,
   			v[2].x-v[0].x,v[2].y-v[0].y,v[2].z-v[0].z).norm();
 		return n;
+	}
+	
+	public UFace setColor(int col) {
+	  this.c=col;
+	  return this;
 	}
 
 	public String toString() {

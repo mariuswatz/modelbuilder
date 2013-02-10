@@ -3,6 +3,8 @@ package unlekker.util;
 import java.io.File;
 
 import processing.core.*;
+import processing.core.PGraphics;
+import processing.opengl.*;
 import unlekker.modelbuilder.*;
 
 public class UTileSaver {

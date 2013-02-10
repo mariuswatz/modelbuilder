@@ -2,6 +2,7 @@ package unlekker.modelbuilder;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.core.PVector;
 import unlekker.util.*;
 
 
@@ -1068,5 +1069,10 @@ public class UVertexList implements UConstants {
 		if(n<1) return null;
 		return v[n-1];
 	}
+
+  public void add(PVector array[]) {
+    for(int i=0; i<array.length; i++) add(array[i].x,array[i].y,array[i].z);
+    
+  }
 
 }

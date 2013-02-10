@@ -7,10 +7,41 @@ public class ULogUtil
 	extends Formatter 
 	implements Filter {
 
+	public int logStyle=UUtil.LOGCURRTIME;
+	private final static String DIVIDER=
+			"----------------------------------------------------------------------";
+	
 	public String[] log;
 	public static int logBufferSize=100;
 	public int logN;
-	              
+	
+	private static Logger logger;
+	private boolean doPrint;
+	
+	public void startLog(boolean doPrint) {
+		if(logger==null) {
+			this.doPrint=doPrint;
+			logger=Logger.getLogger(this.toString());
+    	logger.setUseParentHandlers(false);    	
+    	logger.setFilter(this);
+		}
+	}
+	
+	public void log(String s) {
+		if(doPrint) UUtil.log(s);
+		logger.info(s);
+	}
+
+  public void logDivider(String s) {
+  	log(DIVIDER);
+  	log(s);
+  }
+
+  public void logDivider() {
+  	log(DIVIDER);
+  }
+
+	
 	public String format(LogRecord record) {
 		
 		// Create a StringBuffer to contain the formatted record
@@ -18,7 +49,7 @@ public class ULogUtil
 		StringBuffer sb = new StringBuffer();
 		
   	String tstr=null;
-  	if(UUtil.logStyle==UUtil.LOGSINCESTART) 
+  	if(logStyle==UUtil.LOGSINCESTART) 
   		tstr=UUtil.timeStr(System.currentTimeMillis()-UUtil.logStart)+" ";
   	else {
   		Calendar cal=UUtil.cal;

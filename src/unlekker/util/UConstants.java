@@ -15,7 +15,7 @@ public interface UConstants extends processing.core.PConstants {
 	/**
 	 * Version identifier for this release of the Modelbuilder library
 	 */
-	public static final String modelbuilderVersion="Modelbuilder 0007a04";
+	public static final String modelbuilderVersion="Modelbuilder 0019";
 	
   public static final int savePNG=0,saveTGA=1,saveJPG=2,savePDF=100,
   saveSTL=101,saveDXF=102,saveOBJ=103,saveMOV=200,saveTILE=201;

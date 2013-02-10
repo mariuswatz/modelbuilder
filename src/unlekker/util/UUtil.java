@@ -10,6 +10,7 @@ import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.*;
 
 import processing.core.PApplet;
@@ -28,13 +29,15 @@ import java.util.*;
 
 public class UUtil implements UConstants {
 	private static Runtime runtime;
-	private final static String NULLSTR="NULL",EQUALSTR=" = ",COMMASTR=", ";
+	private final static String NULLSTR="NULL",EQUALSTR=" = ",COMMASTR=", ",
+			DIVIDER="----------------------------------------------------------------------";
 	private final static String STRSQBRACKETSTART="[",STRSQBRACKETEND="]",
 			STRCURLYSTART="{",STRCURLYEND="}",STRGT=">",STRLT="<";
 	private final static Class [] types={
 		Float.class, Integer.class, Double.class, 
 		Long.class, String.class, Boolean.class};
-	
+
+	public static int DEBUGLEVEL=0;
 //	public static HashMap shapeTypes=null;
 
 	/**
@@ -151,6 +154,7 @@ public class UUtil implements UConstants {
 	public static String logMsg[];
   
   public static void logStyle(int style) {
+  	logUtil.logStyle=style;
   	logStyle=style;
   }
   
@@ -169,8 +173,8 @@ public class UUtil implements UConstants {
   		tstr=timeStr(System.currentTimeMillis()-logStart);
   	else {
     	cal.setTimeInMillis(System.currentTimeMillis());
-    	tstr=nf(cal.get(cal.HOUR_OF_DAY),2) +
-    		":"+nf(cal.get(cal.MINUTE),2);
+    	tstr=nf(cal.get(Calendar.HOUR_OF_DAY),2) +
+    		":"+nf(cal.get(Calendar.MINUTE),2);
   	}
 
   	if(!logNoPrint) System.out.println(tstr+" "+s);
@@ -239,13 +243,13 @@ public class UUtil implements UConstants {
 
   public static void logDivider(String s) {
   	logPrint("");
-  	logPrint("----------------------------------------------------------------------");
+  	logPrint(DIVIDER);
   	logPrint(s);
   }
 
   public static void logDivider() {
   	logPrint("");
-  	logPrint("----------------------------------------------------------------------");
+  	logPrint(DIVIDER);
   }
 
   public static void logErr(String s) {
@@ -254,7 +258,7 @@ public class UUtil implements UConstants {
 
   public static void logErrDivider(String s) {
   	logErr("");
-  	logErr("----------------------------------------------------------------------");
+  	logErr(DIVIDER);
   	logErr(s);
   }
   
@@ -273,8 +277,8 @@ public class UUtil implements UConstants {
   public static void logErrPrint(String s) {
   	cal.setTimeInMillis(System.currentTimeMillis());
   	System.err.println(
-  			nf(cal.get(cal.HOUR_OF_DAY),2) +
-  			":"+nf(cal.get(cal.MINUTE),2)+"|  "+
+  			nf(cal.get(Calendar.HOUR_OF_DAY),2) +
+  			":"+nf(cal.get(Calendar.MINUTE),2)+"|  "+
   			s);
   	
   	if(logger!=null) logger.warning(s);
@@ -298,9 +302,6 @@ public class UUtil implements UConstants {
   	if(logger==null) try {
   		Calendar cal=Calendar.getInstance();
   		
-    	
-			logDivider("Added log file output: '"+logFilename+"'");
-			
     	logFilename=filename;   	
 //    	java.util.logging.ConsoleHandler.level=NONE;
     	logger=Logger.getLogger("Util");
@@ -308,7 +309,6 @@ public class UUtil implements UConstants {
     	
     	logUtil=new ULogUtil();
     	logger.setFilter(logUtil);
-//    	logutil=new LogUtil(logger);
 
     	// Erase log once a week
     	File f=new File(logFilename);
@@ -330,6 +330,8 @@ public class UUtil implements UConstants {
     	
     	logger.addHandler(logHandler);
     	logHandler.setFormatter(logUtil);
+    	
+			logDivider("Added log file output: '"+logFilename+"'");
 //    	log("Log started: "+timeStr(cal));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -504,7 +506,7 @@ public class UUtil implements UConstants {
   	int n;
   	
 	  try  { 
-	    Process p=runtime.getRuntime().exec(cmd); 
+	    Process p=Runtime.getRuntime().exec(cmd); 
 	    if(wait) p.waitFor(); 
 	    
 	    BufferedReader reader=
@@ -1302,12 +1304,6 @@ public class UUtil implements UConstants {
 		return formatInt.format(num);
 	}
 
-	static public String nf(int num) {
-		if (formatInt==null) nfInitFormats();
-		formatInt.setMinimumIntegerDigits(3);
-		return formatInt.format(num);
-	}
-
 	static public String strRepeat(String s, int n) {
 		String out="";
 		for(int i=0; i<n; i++) out+=s;
@@ -1493,6 +1489,56 @@ public class UUtil implements UConstants {
 		}
 
 		return buf.toString();
+	}
+
+	public static void log(List l) {
+		for(Object o : l) log(o.toString());
+		
+	}
+
+	public static long timestampStartOfDay(long time) {		
+		Calendar cal=Calendar.getInstance();
+		cal.setTimeInMillis(time);
+		cal.set(Calendar.HOUR_OF_DAY,0);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.SECOND,0);
+		return cal.getTimeInMillis();
+	}
+
+	public static long timestampEndOfDay(long time) {		
+		Calendar cal=Calendar.getInstance();
+		cal.setTimeInMillis(time);
+		cal.set(Calendar.HOUR_OF_DAY,23);
+		cal.set(Calendar.MINUTE,59);
+		cal.set(Calendar.SECOND,59);
+		return cal.getTimeInMillis();
+	}
+
+	public static long timestamp(int year, int month, int dayOfMonth) {
+		Calendar cal=Calendar.getInstance();
+		cal.set(year,month,dayOfMonth,0,0);
+		cal.set(Calendar.SECOND,0);
+		return cal.getTimeInMillis();
+	}
+	
+	public static long timestamp() {
+		return timestampStartOfDay(System.currentTimeMillis());
+	}
+
+	public static float rnd(float max) {
+		return rnd.random(max);
+	}
+
+	public static float rnd(float min, float max) {
+		return rnd.random(min,max);
+	}
+
+	public static int rndInt(int max) {
+		return rnd.integer(max);
+	}
+
+	public static int rndInt(int min, int max) {
+		return rnd.integer(min,max);
 	}
 
 }

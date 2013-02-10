@@ -4,18 +4,19 @@ import processing.core.*;
 import unlekker.modelbuilder.UVec3;
 import unlekker.modelbuilder.UVertexList;
 import controlP5.*;
+
 import java.util.*;
 
 public class USimpleGUI {
 	public PApplet p;
   public ControlP5 cp;
-  public int bgCol, sliderW=100,charWidth=6;
+  public int bgCol, sliderW=100,charWidth=5;
   public int cpx, cpy, cpw, cph,lastW,lastH;
   public int padding=5;
   
   public boolean layoutVertical=true;
   public boolean enabled=true;
-  private boolean layoutCalculated=false;
+  private boolean layoutCalculated=false,pappletIs3D=false;
   
   ArrayList<GUINode> nodes;
 	private int ID;
@@ -24,17 +25,21 @@ public class USimpleGUI {
     p=_p;
     cp=new ControlP5(p);
     cp.setAutoDraw(false);
-    cp.setMoveable(false);
+    cp.setMoveable(false); 
     cp.setColorActive(p.color(255,100,0));
     cp.setColorBackground(p.color(50));
 //    cp.setColorForeground(p.color(255));
-    cp.setColorValue(p.color(255));
-    cp.setColorLabel(p.color(255));
+//    cp.setColorValue(p.color(255));
+//    cp.setColorLabel(p.color(255));
     
     bgCol=UColorTool.toColor("666666");
     
     nodes=new ArrayList<USimpleGUI.GUINode>();
     ID=0;
+    
+    String pappletG=_p.g.getClass().getSimpleName();
+    if(pappletG.indexOf("3D")>-1) pappletIs3D=true;
+    else if(pappletG.indexOf("GL")>-1) pappletIs3D=true;
   }
 
   public void draw() {
@@ -45,15 +50,21 @@ public class USimpleGUI {
   		UUtil.log("USimpleGUI.setLayout() not called - setting vertical layout.");
   		setLayout(true);
   	}
+
+  	if(pappletIs3D) {
+      p.hint(p.DISABLE_DEPTH_TEST);
+      p.noLights();
+  	}
   	
-    p.hint(p.DISABLE_DEPTH_TEST);
-    p.noLights();
     p.fill(bgCol, 200);
     p.noStroke();
     p.rect(0, 0, cpw, cph);
 //    UUtil.log("cpw "+cpw+" "+cph);
     cp.draw();
-    p.hint(p.ENABLE_DEPTH_TEST);
+    
+  	if(pappletIs3D) {
+  		p.hint(p.ENABLE_DEPTH_TEST);
+  	}
   }
   
   public void drawGUIOutlines() {
@@ -89,17 +100,24 @@ public class USimpleGUI {
   }
 
   public USimpleGUI addButton(String name) {
-    Button tmp=cp.addButton(name);// 1, 0,0, name.length()*charWidth, 15);
-    tmp.setWidth(tmp.captionLabel().width()+3);
+    Button tmp=cp.addButton(name,1);// 1, 0,0, name.length()*charWidth, 15);
+//    tmp.setWidth(tmp.getCaptionLabel().getWidth()+3);
+//    tmp.setWidth(tmp.getCaptionLabel().getWidth()+3).updateSize();
 //    addNode(tmp, name,name.length()*charWidth,tmp.getHeight()-1);
     addNode(tmp, name,tmp.getWidth(),tmp.getHeight());
 		return this;
   }
 
 	public USimpleGUI addToggle(String name,boolean value) {
-    Toggle tmp=cp.addToggle(name,value,cpx, cpy, 15, 15);
-		int tw=tmp.captionLabel().width()-5;
-    addNode(tmp, name,tw,tmp.getHeight()+tmp.captionLabel().getLineHeight());
+    Toggle tmp=cp.addToggle(name).setValue(value).setPosition(cpx, cpy).setSize(15,15);
+		int tw=tmp.getCaptionLabel().getWidth()-5;
+		tw=tmp.getCaptionLabel().getText().length()*charWidth;
+		UUtil.log(tw+" "+tmp.getWidth()
+				+" "+tmp.getCaptionLabel().getWidth()+
+				" "+tmp.getCaptionLabel().getText()+
+		" "+tmp.getCaptionLabel().getClass().getName());
+		
+    addNode(tmp, name,tw,tmp.getHeight()+tmp.getCaptionLabel().getLineHeight());
     tmp.setValue(value);
     
 		return this;
@@ -109,16 +127,17 @@ public class USimpleGUI {
 		Textfield txt;
 
 		txt=cp.addTextfield(name,cpx, cpy,w,h);
-		addNode(txt,name,txt.getWidth(),txt.getHeight()+txt.captionLabel().getLineHeight());
+		addNode(txt,name,txt.getWidth(),txt.getHeight()+
+				txt.getCaptionLabel().getLineHeight());
 		return this;
 	}
 	
 	public String getText(String name) {
-		return cp.controller(name).stringValue();
+		return cp.getController(name).getStringValue();
 	}
 
 	public void setText(String name,String text) {
-		Controller c=cp.controller(name);
+		Controller c=cp.getController(name);
 		if(c.getClass().getSimpleName().indexOf("Textfield")==-1) {
 			UUtil.logErr("setText() attempted on non-Textfield object.");
 			return;
@@ -134,14 +153,14 @@ public class USimpleGUI {
 	}
 	
 	public USimpleGUI setLabel(String name,String value) {
-		Textlabel label=(Textlabel)cp.controller(name);
+		Textlabel label=(Textlabel)cp.getController(name);
 		label.setValue(value);
 		return this;
 	}
 	
 	// allows you to the set the caption label on a GUI element
 	public void setCaption(String name,String caption) {
-		Controller c=cp.controller(name);
+		Controller c=cp.getController(name);
 		c.setCaptionLabel(caption);
 	}
 	
@@ -150,7 +169,8 @@ public class USimpleGUI {
 
     Controller tmp=cp.addSlider(name, min, max, val, 0,0, sliderW, 15);
 //    addNode(tmp, name,tmp.getWidth()+ name.length()*charWidth-9,tmp.getHeight()-1);
-    addNode(tmp, name,tmp.getWidth()+tmp.captionLabel().width(),tmp.getHeight());
+    addNode(tmp, name,tmp.getWidth()+tmp.getCaptionLabel().getText().length()*charWidth,tmp.getHeight());
+//    addNode(tmp, name,tmp.getWidth()+tmp.getCaptionLabel().getWidth(),tmp.getHeight());
     
 		return this;
   }
@@ -160,7 +180,7 @@ public class USimpleGUI {
 
       Controller tmp=cp.addSlider(name, min, max, val, 0,0, sliderW, 15);
 //      addNode(tmp, name,tmp.getWidth()+name.length()*charWidth-9,tmp.getHeight()-1);
-      addNode(tmp, name,tmp.getWidth()+tmp.captionLabel().width(),tmp.getHeight());
+      addNode(tmp, name,tmp.getWidth()+tmp.getCaptionLabel().getText().length()*charWidth,tmp.getHeight());
       
   		return this;
     }
@@ -178,7 +198,7 @@ public class USimpleGUI {
     r.setItemsPerRow(1);
     int txtlen=0;
     for(int i=0; i<labels.length; i++) {
-    	Toggle t=r.addItem(labels[i], 1);
+    	r.addItem(labels[i], 1);
     	txtlen=PApplet.max(txtlen,labels[i].length());
     }
     
@@ -263,23 +283,16 @@ public class USimpleGUI {
   			}
   			
   			
-//  			UUtil.log(cpx+","+cpy+" "+
-//  					n.width+","+n.height+
-//  					" rh="+rowh+" "+n.name+" "+n.className);
   			last=n;
   			id++;
   		}
   		
-//  		for(GUINode n : nodes) if(!n.isNewRow && !n.isGroup)
-//  			UUtil.log(n.className+" "+
-//  				((Controller)n.o).position().x+","+
-//  				((Controller)n.o).position().y);
 		}
   }
   
   public void randomizeValue(String name) {
-    Controller c=cp.controller(name);
-    c.setValue(UUtil.rnd.random(c.min(),c.max()));
+    Controller c=cp.getController(name);
+    c.setValue(UUtil.rnd.random(c.getMin(),c.getMax()));
   }
 
   private void addNode(Object o,String name, int width, int height) {
@@ -337,7 +350,7 @@ public class USimpleGUI {
 //	  
 //	  while(cnt<cc.length) {
 //			for(int i=0; i<cc.length; i++) {
-//				int id=cc[i].id();
+//				int id=cc[i].getId();
 //				
 //				UUtil.log("currID "+currID+" "+id+" "+currID+" "+cnt);
 //				if(taken[id]<0 && id<=currID) {
@@ -353,17 +366,17 @@ public class USimpleGUI {
 				UUtil.log("Found: "+id+" "+n.name);
 				if(n.type==SLIDER) {
 					Slider sl=(Slider)n.control;
-		  		UUtil.log(i+"| "+sl.name()+txt.DELIM+sl.value()+" "+sl.id()+" "+n.id);
-		  		txt.add(sl.name()).add(sl.id()).add(n.type).
-		  			add(sl.value()).add(sl.min()).add(sl.max()).endLn();
+		  		UUtil.log(i+"| "+sl.getName()+txt.DELIM+sl.getValue()+" "+sl.getId()+" "+n.id);
+		  		txt.add(sl.getName()).add(sl.getId()).add(n.type).
+		  			add(sl.getValue()).add(sl.getMin()).add(sl.getMax()).endLn();
 				}
 				if(n.type==BUTTON) {
 					Button b=(Button)n.control;
-		  		txt.add(b.name()).add(b.id()).add(n.type).endLn();				
+		  		txt.add(b.getName()).add(b.getId()).add(n.type).endLn();				
 				}
 				if(n.type==TOGGLE) {
 					Toggle b=(Toggle)n.control;
-		  		txt.add(b.name()).add(b.id()).add(n.type).add(b.getState()).endLn();				
+		  		txt.add(b.getName()).add(b.getId()).add(n.type).add(b.getState()).endLn();				
 				}
 				
 				i++;
@@ -409,7 +422,7 @@ public class USimpleGUI {
 						if(type==SLIDER) addSlider(name, txt.getFloat(), txt.getFloat(), txt.getFloat());
 					}
 					if(type==SLIDER) {
-						Slider sl=(Slider)cp.controller(name);
+						Slider sl=(Slider)cp.getController(name);
 						sl.setValue(txt.getFloat());
 						sl.setMin(txt.getFloat());
 						sl.setMax(txt.getFloat());
@@ -422,15 +435,15 @@ public class USimpleGUI {
   public void saveToFile(String fname) {
   	UDataText txt=new UDataText();
   	
-  	ControllerInterface[] cc=cp.getControllerList();
+  	List<ControllerInterface<?>> cc=cp.getAll();
 //  	Util.log("cp.getControllerList = "+cc.length);
-  	for(int i=0; i<cc.length; i++) {
-  		String type=cc[i].getClass().getSimpleName();
+  	for(ControllerInterface<?> ci : cc) {
+  		String type=ci.getClass().getSimpleName();
   		if(type.compareTo("Slider")==0) {
-  			Slider sl=(Slider)cc[i];
-//    		Util.log(i+"| "+sl.name()+" "+sl.value());
-    		txt.add(sl.name()).add(type).
-    			add(sl.value()).add(sl.min()).add(sl.max()).endLn();
+  			Slider sl=(Slider)ci;
+//    		Util.log(i+"| "+sl.getName()+" "+sl.getValue());
+    		txt.add(sl.getName()).add(type).
+    			add(sl.getValue()).add(sl.getMin()).add(sl.getMax()).endLn();
   		}
   	}
   	txt.silent=true;
@@ -455,7 +468,7 @@ public class USimpleGUI {
   			try {
   				control=(Controller)o;
   				type=getType(control);
-  				id=control.id();
+  				id=control.getId();
   			} catch(Exception e) {
 //  				UUtil.logErr(e.getMessage());
   			}
@@ -465,7 +478,7 @@ public class USimpleGUI {
   				if(className.contains("Drop")) paddingTop=group.getHeight();
   				isGroup=true;
   				type=getType(group);
-  				id=control.id();
+  				id=control.getId();
   			} catch(Exception e) {
 //  				UUtil.logErr(e.getMessage());
   			}
@@ -494,18 +507,18 @@ public class USimpleGUI {
 				
 			//UUtil.logDivider(className);
 			if(control!=null) {
-				CVector3f pos=control.position();
+				PVector pos=control.getPosition();
 				//UUtil.log("Pos before: "+pos.x+" "+pos.y+" "+width+" "+height);
 				control.setPosition(cpx, cpy);
-				pos=control.position();
+				pos=control.getPosition();
 				//UUtil.log("Pos after: "+pos.x+" "+pos.y+" "+width+" "+height);
 				return;
 			}
 			else if(group!=null) {
-				CVector3f pos=group.position();
+				PVector pos=group.getPosition();
 				//UUtil.log("Pos before: "+pos.x+" "+pos.y+" "+width+" "+height);
 				group.setPosition(cpx, cpy);
-				pos=group.position();
+				pos=group.getPosition();
 				//UUtil.log("Pos after: "+pos.x+" "+pos.y+" "+width+" "+height);
 				return;
 			}
@@ -518,19 +531,19 @@ public class USimpleGUI {
 //			UUtil.log("Pos before: "+pos.x+" "+pos.y);
 			
 //			UUtil.log(className+" "+
-//  				((Controller)o).position().x+","+
-//  				((Controller)o).position().y);
+//  				((Controller)o).getPosition().x+","+
+//  				((Controller)o).getPosition().y);
 
 		}  	
   }
   
   public boolean isMouseOver() {
   	if(cp==null) return false;
-  	return cp.window(p).isMouseOver();
+  	return cp.getWindow(p).isMouseOver();
   }
 
 	public boolean hasController(String string) {
-		if(cp.controller(string)!=null) return true;
+		if(cp.getController(string)!=null) return true;
 		return false;
 	}
 

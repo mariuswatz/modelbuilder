@@ -472,7 +472,8 @@ public class UIO implements Serializable, PConstants {
   	String s=null,numstr,last,list[];
   	String pre,post;
   	  	
-  	nameFormat=UIO.noExt(nameFormat);
+  	nameFormat=nameFormat.replace('\\', '/');
+//  	nameFormat=UIO.noExt(nameFormat);
   	if(nameFormat.indexOf("#")==-1) nameFormat+=" ###";
   	
   	filterReset();
@@ -485,13 +486,16 @@ public class UIO implements Serializable, PConstants {
 		pos2=nameFormat.lastIndexOf("#");
 		digits=pos2-pos1+1;
 		pre=nameFormat.substring(0,pos1);
-		post=nameFormat.substring(pos2+1);
-//		if(debugLevel>-1) Util.log(path+" '"+pre+"' '"+post+"' "+digits);
+		post=nameFormat.substring(pos1+digits);
+//		if(debugLevel>-1) 
+			UUtil.log(path+" '"+pre+"' '"+post+"' "+digits+
+			    (list==null || list.length==0 ? "list=null" : list[0]));
 		
 //  	Util.log("incr '"+nameFormat+"' "+pos1+"-"+pos2+", "+(pos2-pos1)+" digits. "+path);
 
 		// empty directory? just return
 		if(list==null || list.length==0) {
+		  UUtil.log("Warning: Path empty or not found '"+path+"'");
 			s=path+DIRCHAR+pre+UUtil.nf((int)0,digits)+post;			
 			return s;
 		}

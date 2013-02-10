@@ -28,11 +28,12 @@ import java.util.ArrayList;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import unlekker.util.*;
 
 public class UGeometry implements UConstants {
 	public static String NONAME="No name";
-	
+	public static int USENORMALS=1,USEFACECOLOR=2,USEVERTEXCOLOR=8;
 	public boolean doNoDuplicates=false;
 	public String name;
 	
@@ -756,63 +757,85 @@ public class UGeometry implements UConstants {
 	}
 
 	public void draw(PApplet p) {
-		draw(p,false);
+		draw(p.g,-1);
 	}
 	
 
+	   /**
+     * Draws all faces contained in this UGeometry object.
+     * @param p Reference to PApplet instance to draw into
+     */
+
+    public void draw(PApplet p,int opt) {
+      draw(p.g,opt);
+    }
+    
 	/**
 	 * Draws all faces contained in this UGeometry object.
 	 * @param p Reference to PApplet instance to draw into
 	 */
 
-	public void draw(PApplet p,boolean useNormals) {
-		UFace f;
+	public void draw(PGraphics g,int opt) {
+	  boolean useNormals= false,useFaceColor= false,useVColor= false;
+	  UFace f;
 		int fid=0;
 		UVec3 vv;
 
-		if(p.g.getClass().getSimpleName().equals("PGraphicsJava2D")) {
-			p.beginShape(TRIANGLES);
+		if(opt>0) {
+          useNormals=((opt & USEFACECOLOR)>0);
+          useFaceColor=((opt & USEFACECOLOR)>0);
+          useVColor=((opt & USEVERTEXCOLOR)>0);
+		}
+		
+		if(g.getClass().getSimpleName().equals("PGraphicsJava2D")) {
+			g.beginShape(TRIANGLES);
 			for(int i=0; i<faceNum; i++) {			
 				f=face[i];
+				if(useFaceColor) g.fill(f.c);
+				
 				fid=0;
 				vv=vert.v[f.vid[fid++]];
-				p.vertex(vv.x,vv.y);
+				g.vertex(vv.x,vv.y);
 				vv=vert.v[f.vid[fid++]];
-				p.vertex(vv.x,vv.y);
+				g.vertex(vv.x,vv.y);
 				vv=vert.v[f.vid[fid]];
-				p.vertex(vv.x,vv.y);
+				g.vertex(vv.x,vv.y);
 			}
-			p.endShape();
+			g.endShape();
 
 			return;
 		}
 		
-		p.beginShape(TRIANGLES);		
-		if(useNormals)
+		g.beginShape(TRIANGLES);
+		if(useNormals) 
 			for(int i=0; i<faceNum; i++) {			
 				f=face[i];
+				if(useFaceColor) g.fill(f.c);
+				
 				fid=0;
-				p.normal(f.n.x, f.n.y, f.n.z);
+				g.normal(f.n.x, f.n.y, f.n.z);
 				vv=vert.v[f.vid[fid++]];
-				p.vertex(vv.x,vv.y,vv.z);
+				g.vertex(vv.x,vv.y,vv.z);
 				vv=vert.v[f.vid[fid++]];
-				p.vertex(vv.x,vv.y,vv.z);
+				g.vertex(vv.x,vv.y,vv.z);
 				vv=vert.v[f.vid[fid]];
-				p.vertex(vv.x,vv.y,vv.z);
+				g.vertex(vv.x,vv.y,vv.z);
 			}
 		else 
 			for(int i=0; i<faceNum; i++) {			
 				f=face[i];
-				fid=0;
+                if(useFaceColor) g.fill(f.c);
+
+                fid=0;
 				vv=vert.v[f.vid[fid++]];
-				p.vertex(vv.x,vv.y,vv.z);
+				g.vertex(vv.x,vv.y,vv.z);
 				vv=vert.v[f.vid[fid++]];
-				p.vertex(vv.x,vv.y,vv.z);
+				g.vertex(vv.x,vv.y,vv.z);
 				vv=vert.v[f.vid[fid]];
-				p.vertex(vv.x,vv.y,vv.z);
+				g.vertex(vv.x,vv.y,vv.z);
 			}
 		
-		p.endShape();		
+		g.endShape();		
 	}
 
 	/**

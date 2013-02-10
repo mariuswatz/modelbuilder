@@ -20,7 +20,8 @@ public class Main extends PApplet {
 				"unlekker.examples.TileSaving",
 				"unlekker.examples.PShapeDrawing",
 				"unlekker.examples.FileStructure",
-				"unlekker.examples.GUITest"
+				"unlekker.examples.GUITest",
+				"unlekker.examples.UTimerTest"
 				
 				
 				

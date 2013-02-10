@@ -151,7 +151,8 @@ public class UDataText {
 	}
 
 	public String parseGetLine() {
-		return str[parseLine++];
+		parseString();
+		return parseStr; 
 	}
 
 	////////////////////////////////
@@ -194,13 +195,6 @@ public class UDataText {
 	public UDataText add(String s[]) {
 		for(int i=0; i<s.length; i++) {
 			if(s[i]!=null) addLn(s[i]);
-		}
-		return this;
-	}
-
-	public UDataText add(ArrayList<String> s) {
-		for(String theString : s) {
-			if(theString!=null) addLn(theString);
 		}
 		return this;
 	}
@@ -282,17 +276,15 @@ public class UDataText {
 		doAppend=false;
 	}
 
-	public UDataText save() {
+	public void save() {
 		save(filename,false);
-		return this;
 	}
 
-	public UDataText save(String _filename) {
+	public void save(String _filename) {
 		save(_filename,false);
-		return this;
 	}
 	
-	public UDataText save(String _filename,boolean _append) {
+	public void save(String _filename,boolean _append) {
 		setFileOptions(_filename, _append);
 	
 		try {
@@ -315,7 +307,6 @@ public class UDataText {
 		 e.printStackTrace();
 	  }
 	  
-		return this;
 	}
 
 	public UDataText load(String _filename) {
@@ -331,7 +322,7 @@ public class UDataText {
 			} while (ln!=null);
 
 			toArray();			
-			if(!silent) UUtil.log("DataText.load(): "+numStr+" lines read.");
+			if(!silent) UUtil.log("DataText.load('"+UIO.noPath(filename)+":')': "+numStr+" lines read.");
 			inStream.close();
 			
 		} catch (IOException e) {

@@ -1,11 +1,12 @@
 package unlekker.modelbuilder;
 
-import java.awt.event.*;
-
 import controlP5.ControlP5;
 import controlP5.ControllerInterface;
 
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import processing.core.*;
+import processing.event.*;
 import unlekker.util.*;
 
 /**
@@ -33,7 +34,7 @@ import unlekker.util.*;
  * @author <a href="http://workshop.evolutionzone.com/">Marius Watz</a>
  *
  */
-public class UNav3D {
+public class UNav3D implements PConstants {
 	public PApplet p;
 	public UVec3 rot,trans,rotReset,transReset;
 	public float rotSpeed=5,transSpeed=5;
@@ -41,6 +42,9 @@ public class UNav3D {
 	public boolean shiftIsDown=false,altIsDown,ctrlIsDown;
 	public USimpleGUI gui;
 	public boolean enabled=true;
+	public MouseEvent theMouseEvent;
+	public KeyEvent theKeyEvent;
+	private boolean doDebug=true;
 	
 	public UNav3D(PApplet _p) {
 		init(_p,true);
@@ -76,21 +80,29 @@ public class UNav3D {
 	public void registerEvents() {
 		MouseWheelInput mw=new MouseWheelInput();
 	  p.addMouseWheelListener(mw);
-		p.registerKeyEvent(this);
-		p.registerMouseEvent(this);
+	  
+	  p.registerMethod("mouseEvent",this);
+	  p.registerMethod("keyEvent",this);	  
+//		p.registerKeyEvent(this);
+//		p.registerMouseEvent(this);
 	}
 
 	public void unregisterMouseEvents() {
-		p.unregisterMouseEvent(this);
+	  p.unregisterMethod("mouseEvent",this);
+//	  p.registerMethod("keyEvent",this);
 	}
 
 	public void unregisterKeyEvents() {
-		p.unregisterKeyEvent(this);
+	  p.unregisterMethod("keyEvent",this);
+
+//		p.unregisterKeyEvent(this);
 	}
 
 	public void unregisterEvents() {
-		p.unregisterKeyEvent(this);
-		p.unregisterMouseEvent(this);
+//		p.unregisterKeyEvent(this);
+//		p.unregisterMouseEvent(this);
+		  p.unregisterMethod("mouseEvent",this);
+	  p.unregisterMethod("keyEvent",this);
 	}
 
 	public void transformPoint(UVec3 v) { 
@@ -116,14 +128,16 @@ public class UNav3D {
   
 	public void keyEvent(KeyEvent ev) {
 		if(!enabled) return;
+		theKeyEvent=ev;
 		
-		if(ev.getID() == KeyEvent.KEY_PRESSED) keyPressed();
-		else if(ev.getID() == KeyEvent.KEY_RELEASED) keyReleased();
+		if(ev.getAction() == KeyEvent.PRESS) keyPressed(ev);
+		else if(ev.getAction() == KeyEvent.RELEASE) keyReleased(ev);
 	}
 	
 	public void mouseEvent(MouseEvent ev) {
 		if(!enabled) return;
-		if (ev.getID() == MouseEvent.MOUSE_DRAGGED) {
+		theMouseEvent=ev;
+		if (ev.getAction() == MouseEvent.DRAG) {
 			mouseDragged();
 		}
 	}
@@ -132,12 +146,12 @@ public class UNav3D {
 		if(gui!=null && gui.isMouseOver()) return;
 		
   	float mult=1;
-  	if(p.keyEvent!=null && p.keyEvent.isControlDown()) mult=10; 
+  	if(ctrlIsDown) mult=10; 
   
   	if(p.mouseButton==p.RIGHT && ctrlIsDown) {
   		rot.z+=p.radians(p.mouseX-p.pmouseX)*1*transSpeed;
   	}
-  	else if(p.mouseButton==p.RIGHT && !(shiftIsDown || ctrlIsDown)) {
+  	else if(p.mouseButton==p.RIGHT) {
       trans.z+=p.radians(p.mouseY-p.pmouseY)*30*transSpeed*mult;
       return ;
   	}
@@ -149,8 +163,8 @@ public class UNav3D {
 		
     // if shift is down do pan instead of rotate
     if(shiftIsDown) {
-      trans.x+=p.radians(p.mouseX-p.pmouseX)*5*transSpeed*mult;
-      trans.y+=p.radians(p.mouseY-p.pmouseY)*5*transSpeed*mult;
+      trans.x+=(p.mouseX-p.pmouseX)*transSpeed*mult;
+      trans.y+=(p.mouseY-p.pmouseY)*transSpeed*mult;
     }
     // calculate rot.x and rot.Y by the relative change
     // in mouse position
@@ -160,76 +174,83 @@ public class UNav3D {
     }
   }
 
-  public void keyReleased() {
-  	if(p.key==p.CODED && p.keyCode==p.SHIFT) {
+  public void keyReleased(KeyEvent ev) {
+  	if(UUtil.DEBUGLEVEL>3) UUtil.log("keyReleased "+
+  			p.keyEvent.getKeyCode()+" "+(int)p.keyEvent.getKey()+" "+
+  			p.CONTROL+" "+PConstants.CODED+" "+(p.key==p.CODED));
+  	
+  	
+  	if(ev.getKeyCode()==p.SHIFT) {
   		shiftIsDown=false;
-//  		UUtil.log("Shift released");
+  		if(UUtil.DEBUGLEVEL>3) UUtil.log("SHIFT released");
   	}
-  	if(p.key==p.CODED && p.keyCode==p.CONTROL) {
+  	if(ev.getKeyCode()==p.CONTROL) {
   		ctrlIsDown=false;
-//  		UUtil.log("Shift released");
+  		if(UUtil.DEBUGLEVEL>3) UUtil.log("CTRL released");
   	}
-  	if(p.key==p.CODED && p.keyCode==p.ALT) {
+  	if(ev.getKeyCode()==p.ALT) {
   		altIsDown=false;
-//  		UUtil.log("Shift released");
+  		if(UUtil.DEBUGLEVEL>3) UUtil.log("ALT released");
   	}
   }
 
-  public void keyPressed() {
-  	if(p.key==p.CODED && p.keyCode==p.SHIFT) {
+  @SuppressWarnings("static-access")
+  public void keyPressed(KeyEvent ev) {
+    if(UUtil.DEBUGLEVEL>3) UUtil.log("keyPressed "+
+        ev.getKeyCode()+" "+
+        p.keyEvent.getKeyCode()+" "+(int)p.keyEvent.getKey()+"|"+
+        p.CONTROL+" "+PConstants.CODED+" "+(p.key==p.CODED));
+    
+  	if(ev.getKeyCode()==p.SHIFT) {
   		shiftIsDown=true;
-//  		UUtil.log("Shift down");
+  		if(UUtil.DEBUGLEVEL>3) UUtil.log("SHIFT pressed");
   	}
-  	if(p.key==p.CODED && p.keyCode==p.CONTROL) {
+  	if(ev.getKeyCode()==p.CONTROL) {
   		ctrlIsDown=true;
-//  		UUtil.log("Shift released");
+  		if(UUtil.DEBUGLEVEL>3) UUtil.log("CTRL pressed");
   	}
-  	if(p.key==p.CODED && p.keyCode==p.ALT) {
+  	if(ev.getKeyCode()==p.ALT) {
   		altIsDown=true;
-//  		UUtil.log("Shift released");
+  		if(UUtil.DEBUGLEVEL>3) UUtil.log("ALT pressed");
   	}
   	
   	float mult=1;
-  	if(p.keyEvent!=null && p.keyEvent.isControlDown()) mult=10; 
+  	if(ctrlIsDown) mult=10; 
 
-    if(p.key==p.CODED) {
+//    if(p.key==p.CODED) {
       // check to see if CTRL is pressed
       if(p.keyEvent.isControlDown()) {
         // do zoom in the Z axis
-        if(p.keyCode==p.UP) trans.z+=transSpeed*mult;
-        if(p.keyCode==p.DOWN) trans.z-=transSpeed*mult;
-        if(p.keyCode==p.LEFT) rot.z+=p.radians(rotSpeed*mult);
-        if(p.keyCode==p.RIGHT) rot.z-=p.radians(rotSpeed*mult);
+        if(ev.getKeyCode()==p.UP) trans.z+=transSpeed*mult;
+        if(ev.getKeyCode()==p.DOWN) trans.z-=transSpeed*mult;
+        if(ev.getKeyCode()==p.LEFT) rot.z+=p.radians(rotSpeed*mult);
+        if(ev.getKeyCode()==p.RIGHT) rot.z-=p.radians(rotSpeed*mult);
       }
       // check to see if CTRL is pressed
       else if(p.keyEvent.isShiftDown()) {
         // do translations in X and Y axis
-        if(p.keyCode==p.UP) trans.y-=transSpeed*mult;;
-        if(p.keyCode==p.DOWN) trans.y+=transSpeed*mult;;
-        if(p.keyCode==p.RIGHT) trans.x+=transSpeed*mult;;
-        if(p.keyCode==p.LEFT) trans.x-=transSpeed*mult;;
+        if(ev.getKeyCode()==p.UP) trans.y-=transSpeed*mult;;
+        if(ev.getKeyCode()==p.DOWN) trans.y+=transSpeed*mult;;
+        if(ev.getKeyCode()==p.RIGHT) trans.x+=transSpeed*mult;;
+        if(ev.getKeyCode()==p.LEFT) trans.x-=transSpeed*mult;;
       }
       else {
         // do rotations around X and Y axis
-        if(p.keyCode==p.UP) rot.x+=p.radians(rotSpeed*mult);
-        if(p.keyCode==p.DOWN) rot.x-=p.radians(rotSpeed*mult);
-        if(p.keyCode==p.RIGHT) rot.y+=p.radians(rotSpeed*mult);
-        if(p.keyCode==p.LEFT) rot.y-=p.radians(rotSpeed*mult);
+        if(ev.getKeyCode()==p.UP) rot.x+=p.radians(rotSpeed*mult);
+        if(ev.getKeyCode()==p.DOWN) rot.x-=p.radians(rotSpeed*mult);
+        if(ev.getKeyCode()==p.RIGHT) rot.y+=p.radians(rotSpeed*mult);
+        if(ev.getKeyCode()==p.LEFT) rot.y-=p.radians(rotSpeed*mult);
       }
       
-      if(ctrlIsDown && p.keyCode==KeyEvent.VK_HOME) reset();
-    }
-    else {
-      if(p.keyEvent.isControlDown()) {
-        if(p.keyCode=='R') {
-//        	reset();
-        }
-      }
-    }
+//    }
+    
+    if(ctrlIsDown && ev.getKeyCode()==java.awt.event.KeyEvent.VK_HOME) reset();
+
   }
 
 	public UNav3D reset() {
-		p.println("Reset transformations.");
+//		if(UUtil.DEBUGLEVEL>3) 
+			p.println("Reset transformations. "+transReset);
 		trans.set(transReset);
 		rot.set(rotReset);
 	  return this;
@@ -271,9 +292,10 @@ public class UNav3D {
   public void mouseWheel(float step) {
 		if(!enabled) return;
 		
-  	if(p.keyEvent!=null && p.keyEvent.isControlDown())
-  		trans.z=trans.z+step*50;
-  	else trans.z=trans.z+step*5;
+//  	if(p.keyEvent!=null && p.keyEvent.isControlDown())
+//  		trans.z=trans.z+step*50;
+//  	else 
+  		trans.z=trans.z+step*5;
   }
   
   public String toStringData() {
@@ -283,10 +305,9 @@ public class UNav3D {
 
 	// utility class to handle mouse wheel events
 	class MouseWheelInput implements MouseWheelListener{
-		public void mouseWheelMoved(MouseWheelEvent e) {
+		public void mouseWheelMoved(java.awt.event.MouseWheelEvent e) {
 	    mouseWheel(e.getWheelRotation());
-	  }
-	
+	  }	
 	}
 
 
