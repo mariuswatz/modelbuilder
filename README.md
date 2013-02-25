@@ -7,6 +7,7 @@ Modelbuilder provides a set of object-oriented data structures and workflow meta
 
 Modelbuilder was first released in 2011 as part of my artist-in-residence project with Makerbot Industries, and the library is thus somewhat biased towards digital fabrication (3D printing, laser cutting etc.) My design priority has always been ease of coding rather than maximum realtime performance, but the library still has plenty of useful tools for realtime applications. 
 
+Update for Processing 2.0 beta series: [modelbuilder v0019](https://github.com/mariuswatz/modelbuilder/blob/master/exported/modelbuilder0019-2.0b7.zip) is compatible with Processing 2.0b7, but has not been tested on Processing 2.0b8.
 
 Modelbuilder as Swiss Army Knife
 ======================
