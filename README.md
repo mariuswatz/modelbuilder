@@ -7,7 +7,14 @@ Modelbuilder provides a set of object-oriented data structures and workflow meta
 
 Modelbuilder was first released in 2011 as part of my artist-in-residence project with Makerbot Industries, and the library is thus somewhat biased towards digital fabrication (3D printing, laser cutting etc.) My design priority has always been ease of coding rather than maximum realtime performance, but the library still has plenty of useful tools for realtime applications. 
 
-*Update for Processing 2.0 beta:* [modelbuilder v0019](https://github.com/mariuswatz/modelbuilder/blob/master/exported/modelbuilder0019-2.0b7.zip) is compatible with Processing 2.0b7, but has not been tested on Processing 2.0b8.
+**Users of my old library [unlekkerLib](http://workshop.evolutionzone.com/unlekkerlib/)** should note that Modelbuilder replaces that library. Having both libraries installed will produce unresolvable conflicts. Modelbuilder does offers most of the same functionality, although with significant API changes. If there was something in unlekkerLib you need I suggest you open an issue on Modelbuilder and I will try to accommodate you.
+
+Update for Processing 2.0 beta:
+======================
+
+The code base in [src](https://github.com/mariuswatz/modelbuilder/tree/master/src) is Processing 2.0b7 compatible, the compiled library is [modelbuilder v0019](https://github.com/mariuswatz/modelbuilder/blob/master/exported/modelbuilder0019-2.0b7.zip) (not tested on Processing 2.0b8). 
+
+I'm still finding some issues using 2.0 for my own projects, so I will maintain code for 1.5.1 for a while longer. See see [src-0151-compatible](https://github.com/mariuswatz/modelbuilder/tree/master/src-0151-compatible).
 
 Modelbuilder as Swiss Army Knife
 ======================
