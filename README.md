@@ -18,7 +18,8 @@ Update March 16, 2013
 
 Modelbuilder-0020 has been exported based on this code and briefly tested with Processing 2.0b8. 
 
-Downloads: [Modelbuilder-0020](https://github.com/mariuswatz/modelbuilder/blob/master/exported/Modelbuilder0020-2.0b8.zip) / [UMovieMaker-001](https://github.com/mariuswatz/modelbuilder/blob/master/exported/UMovieMaker/UMovieMaker-001.zip)
+Downloads: [Modelbuilder-0020](http://workshop.evolutionzone.com/codedist/Modelbuilder0020-2.0b8.zip) / 
+[UMovieMaker-001](http://workshop.evolutionzone.com/codedist/UMovieMaker-001.zip)
 
 
 Modelbuilder as Swiss Army Knife
