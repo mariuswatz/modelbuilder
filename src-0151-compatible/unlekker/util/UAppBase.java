@@ -19,15 +19,22 @@ public class UAppBase implements UConstants {
 	public UAppBase(PApplet p) {
 		this.p=p;
 		pathCurrent=UIO.getCurrentDir();
-		pathSave=pathCurrent+UIO.DIRCHAR+"save";
+		pathSave=pathCurrent+UIO.DIRCHAR+"save/";
 	}
 
-  public void vertex(UVec3 v[],int n) {
-  	for(int i=0; i<n; i++) p.vertex(v[i].x,v[i].y,v[i].z);
+	public UAppBase vertex(UVec3 v[]) {
+	  vertex(v,v.length);
+	  return this;
 	}
 	
-	public void vertex(UVec3 v) {
+  public UAppBase vertex(UVec3 v[],int n) {
+  	for(int i=0; i<n; i++) p.vertex(v[i].x,v[i].y,v[i].z);
+	  return this;
+	}
+	
+	public UAppBase vertex(UVec3 v) {
 	  p.vertex(v.x,v.y,v.z);
+	  return this;
 	}
 	
 	public void depth() {
@@ -41,9 +48,12 @@ public class UAppBase implements UConstants {
 	
 	
   public void glClearDepthBuffer() {
-		PGL gl=((PGraphicsOpenGL)p.g).beginPGL();
-		gl.gl.glClear(gl.gl.GL_DEPTH_BUFFER_BIT);
-		((PGraphicsOpenGL)p.g).endPGL();  	
+//    PGL gl=((PGraphicsOpenGL)p.g).beginPGL();
+//    gl.gl.glClear(gl.gl.GL_DEPTH_BUFFER_BIT);
+//    ((PGraphicsOpenGL)p.g).endPGL();    
+    GL gl=((PGraphicsOpenGL)p.g).beginGL();
+    gl.glClear(gl.GL_DEPTH_BUFFER_BIT);
+    ((PGraphicsOpenGL)p.g).endGL();    
   }
 
 	public void keyEvent(KeyEvent ev) {
@@ -81,7 +91,7 @@ public class UAppBase implements UConstants {
 
 
   public boolean rndProbGt(float prob) {
-  	return UUtil.rnd.prob(prob);
+  	return UUtil.rnd.prob(prob>100 ? 100 : prob);
   }
   
   public float rnd(float range) {
