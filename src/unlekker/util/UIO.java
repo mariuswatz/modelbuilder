@@ -1015,6 +1015,12 @@ public class UIO implements Serializable, PConstants {
   	System.out.println(s);
   }
   
+  public static String fixPath(String thePath) {
+	    thePath=thePath.replace('\\', '/');
+	    if(!thePath.endsWith("/")) thePath+='/';
+	    return thePath;
+	  }
+
   
   ///////////////////////////////////////////////////////////7
   // FILE FILTER FUNCTIONS
