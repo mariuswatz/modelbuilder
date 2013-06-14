@@ -7,6 +7,12 @@ Modelbuilder provides a set of object-oriented data structures and workflow meta
 
 Modelbuilder was first released in 2011 as part of my artist-in-residence project with Makerbot Industries, and the library is thus somewhat biased towards digital fabrication (3D printing, laser cutting etc.) My design priority has always been ease of coding rather than maximum realtime performance, but the library still has plenty of useful tools for realtime applications. 
 
+Update June 13, 2013
+======================
+
+Fun news: I've posted a rough pre-beta port of Modelbuilder to JavaScript. Behold [https://github.com/mariuswatz/modelbuilderjs](Modelbuilder.js), incomplete and quite likely buggy, but with the most basic geometry concepts in place. A sample sketch can be seen here: [http://workshop.evolutionzone.com/modelbuilderjs/](http://workshop.evolutionzone.com/modelbuilderjs/).
+
+Like its Java sibling, Modelbuilder.js is the feeble attempts of a mathematically challenged coder to simplify computational geometry tasks, minimize repetitive code (esp. for-loops) and empower non-experts. The code is pure JS and tries to follow established JS conventions. It is also free of dependencies on other libraries, although I plan to add convenience methods to facilitate integration with [Processing.js](http://processingjs.org/) and (possibly) [Three.js](http://threejs.org/).
 
 Update March 16, 2013
 ======================
