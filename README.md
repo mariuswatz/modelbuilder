@@ -1,9 +1,6 @@
-**This repo is for archival purposes only.** See [https://github.com/mariuswatz/modelbuilderMk2](https://github.com/mariuswatz/modelbuilderMk2) for recent versions of ModelbuilderMk2 for Processing 2.x. You can download Processing-ready builds of ModelbuilderMk2 from [the export folder](https://github.com/mariuswatz/modelbuilderMk2/tree/master/export) of the new repo.
+**This repo is for archival purposes only.** Please visit  [https://github.com/mariuswatz/modelbuilderMk2](https://github.com/mariuswatz/modelbuilderMk2) for recent versions of ModelbuilderMk2 for Processing 2.x. You can download Processing-ready builds of ModelbuilderMk2 from [the export folder](https://github.com/mariuswatz/modelbuilderMk2/tree/master/export) of the new repo.
 
-
-_Note: The old Modelbuilder has been superceded by ModelbuilderMk2, which is a complete rewrite based on the core ideas of the old library. ModelbuilderMk2 gets rid of many inconsistencies in the original library design, as well as misplaced feature bloat. Unfortunately, ModelbuilderMk2 is not backwards compatible._ 
-
-
+The old Modelbuilder has been superceded by ModelbuilderMk2, which is a complete rewrite based on the best ideas of the old library, minus the logical inconsistencies and flaws in the original library design. Unfortunately, this also means that ModelbuilderMk2 is not backwards compatible.
 
 
 Modelbuilder
